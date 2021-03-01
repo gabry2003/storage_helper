@@ -19,7 +19,6 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
   double getDoubleValue(DartObject obj, String name) => obj.getField(name).toDoubleValue();
   List<DartObject> getListValue(DartObject obj, String name) => obj.getField(name).toListValue();
   Map<DartObject,DartObject> getMapValue(DartObject obj, String name) => obj.getField(name).toMapValue();
-  Function getFunctionValue(DartObject obj, String name) => obj.getField(name).toFunctionValue() as Function;
 
   T convert<T>(DartObject obj) {
     switch(T) {
@@ -38,11 +37,6 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
           onInit: getBoolValue(obj, "onInit"),
           description: getStringValue(obj, "description"),
           defaultValue: getStringValue(obj, "defaultValue"),
-        ) as T;
-      case StorageHelperCustomType:
-        return StorageHelperCustomType(
-          convert: getFunctionValue(obj, "convert"),
-          reConvert: getFunctionValue(obj, "reConvert")
         ) as T;
       default:
         return null;
