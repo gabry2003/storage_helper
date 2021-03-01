@@ -54,6 +54,9 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       getSet += """\n    async Future<void> set$firstUpper(dynamic val) {
       $setCode
 }""";
+      getSet += """\n    async Future<void> delete$firstUpper() {
+      await set$firstUpper(null);
+}""";
     }
 
     init += "\n    }";
@@ -74,6 +77,12 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
     );""";
 
     code += getSet;
+
+    code += """
+    Future<void> deleteAll() async {
+        await storage.deleteAll();
+    }
+""";
 
     code += init;
 
