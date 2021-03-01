@@ -7,12 +7,14 @@ import 'package:storage_helper_gen/storage_helper_element.dart';
 import 'package:storage_helper_gen/storage_helper_model.dart';
 
 class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder> {
+  void log(String msg) {
+    print("[StorageHelperGenerator - ${DateTime.now().toString()}] $msg");
+  }
+
   @override
   generateForAnnotatedElement(
       Element element, ConstantReader annotation, BuildStep buildStep) {
-    print("[StorageHelperGenerator] start...");
-    print("[StorageHelperGenerator] element:");
-    print(element);
+    log("start...");
 
     String code = """class StorageHelper {""";
     String getSet = "\n";
@@ -20,7 +22,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
     String attributes = "";
     String init = "\nFuture<void> init() async {";
 
-    if(element is! StorageHelperBuilder) {
+    if(element is! StorageHelperModel) {
       throw InvalidGenerationSourceError("Sorgente non valida!");
     }
 
