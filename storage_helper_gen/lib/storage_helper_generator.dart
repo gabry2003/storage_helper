@@ -8,7 +8,8 @@ import 'package:storage_helper_gen/storage_helper_model.dart';
 
 class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder> {
   void log(String msg) {
-    print("[StorageHelperGenerator - ${DateTime.now().toString()}] $msg");
+    print(DateTime.now().toString());
+    print("[STORAGE_HELPER_GENERATOR] $msg");
   }
 
   @override
@@ -21,10 +22,6 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
     String statics = "";
     String attributes = "";
     String init = "\nFuture<void> init() async {";
-
-    if(element is! StorageHelperModel) {
-      throw InvalidGenerationSourceError("Sorgente non valida!");
-    }
 
     StorageHelperModel model = annotation.read('model').objectValue as StorageHelperModel;
     List<StorageHelperElement> elementi = model.elements;
