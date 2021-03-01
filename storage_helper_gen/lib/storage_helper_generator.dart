@@ -155,7 +155,7 @@ class StorageHelper {""";
     StorageHelperModel model;
     bool doLog;
     
-    StorageHelper({@required this.model, this.doLog=true) : super(
+    StorageHelper({@required this.model, this.doLog=true}) : super(
         model: model,
         doLog: doLog
     );""";
