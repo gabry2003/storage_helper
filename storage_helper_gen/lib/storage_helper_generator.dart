@@ -21,6 +21,9 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
   Map<DartObject,DartObject> getMapValue(DartObject obj, String name) => obj.getField(name).toMapValue();
 
   T convert<T>(DartObject obj) {
+    print("to string...");
+    print(obj.toString());
+
     switch(T) {
       case String:
         return obj.toStringValue() as T;
@@ -31,6 +34,9 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       case double:
         return obj.toDoubleValue() as T;
       case StorageHelperElement:
+        print("to string...");
+
+        print(obj.getField("name").toString());
         return StorageHelperElement(
           key: getStringValue(obj, "key"),
           type: getStringValue(obj, "type"),
@@ -88,9 +94,6 @@ class StorageHelper {""";
     Map<String, StorageHelperCustomType> customTypes = model.customTypes;
 
     for(StorageHelperElement elemento in elementi) {
-      print("[StorageHelperGenerator] Add element:");
-      print(elemento.toMap);
-
       String staticName = elemento.key.replaceAllMapped(RegExp(r'(?<=[a-z])[A-Z]'), (Match m) => ('_' + m.group(0))).toUpperCase();
       String firstUpper = "${elemento.key.toUpperCase()}${elemento.key.substring(1)}";
       String type;
