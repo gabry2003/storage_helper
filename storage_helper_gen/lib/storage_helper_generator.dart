@@ -6,6 +6,7 @@ import 'package:storage_helper_gen/storage_helper_builder.dart';
 import 'package:storage_helper_gen/storage_helper_custom_type.dart';
 import 'package:storage_helper_gen/storage_helper_element.dart';
 import 'package:storage_helper_gen/storage_helper_model.dart';
+import 'package:storage_helper_gen/storage_helper_type.dart';
 
 class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder> {
   void log(String msg) {
@@ -19,10 +20,10 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
   double getDoubleValue(DartObject obj, String name) => obj.getField(name).toDoubleValue();
   List<DartObject> getListValue(DartObject obj, String name) => obj.getField(name).toListValue();
   Map<DartObject,DartObject> getMapValue(DartObject obj, String name) => obj.getField(name).toMapValue();
+  ExecutableElement getFunctionValue(DartObject obj, String name) => obj.getField(name).toFunctionValue();
 
   T convert<T>(DartObject obj) {
-    print("to string...");
-    print(obj.toString());
+    String toString = obj.toString();
 
     switch(T) {
       case String:
@@ -33,18 +34,28 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
         return obj.toIntValue() as T;
       case double:
         return obj.toDoubleValue() as T;
+      case StorageHelperCustomType:
+        return StorageHelperCustomType() as T;
       case StorageHelperElement:
         print("to string...");
 
         print(obj.getField("name").toString());
         return StorageHelperElement(
           key: getStringValue(obj, "key"),
-          type: getStringValue(obj, "type"),
+          type: toString.contains("String") ? getStringValue(obj, "type") : convert<StorageHelperType>(obj.getField("type")),
           onInit: getBoolValue(obj, "onInit"),
           description: getStringValue(obj, "description"),
           defaultValue: getStringValue(obj, "defaultValue"),
         ) as T;
       default:
+        if(toString.contains("StorageHelperType")) {  // Se è un tipo di StorageHelper
+          if(toString.contains("bool")) return StorageHelperType.bool as T;
+          if(toString.contains("int")) return StorageHelperType.int as T;
+          if(toString.contains("double")) return StorageHelperType.double as T;
+          if(toString.contains("DateTime")) return StorageHelperType.DateTime as T;
+          if(toString.contains("String")) return StorageHelperType.String as T;
+        }
+
         return null;
     }
   }
@@ -99,7 +110,12 @@ class StorageHelper {""";
       String type;
       String defaultValue;
 
-      if(elemento.type is String) {
+      if(elemento.type is String) { // Se l'elemento ha un tipo personalizzato
+        // Controllo che la funzione ci sia
+        if(customTypes[elemento.key].convert == null) {
+          log("Elemento non convertibile, salto!");
+          continue;
+        }
         type = "\"${elemento.type}\"";
         defaultValue = customTypes[elemento.key].convert(elemento.defaultValue);
       }else {
