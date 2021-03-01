@@ -40,7 +40,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
           String typeToString = obj.getField("type").toString();
 
           if(typeToString.contains("StorageHelperType")) {  // Se è un tipo di StorageHelper
-            // Etraggo l'indice dell'enum dal toString e accedo al valore dall'enum da qui
+            // Estraggo l'indice dell'enum dal toString e accedo al valore dall'enum da qui
             type = StorageHelperType.values[int.tryParse(typeToString.split("index = ")[1].replaceAll("int (", "").replaceAll(")", ""))];
           }else {
             type = getStringValue(obj, "type");
@@ -121,9 +121,10 @@ class StorageHelper extends StorageHelperBase {""";
         try {
           if(customTypes[elemento.key].convert == null) throw new Exception();
         } catch(e) {
-          log("Elemento non convertibile, salto!");
+          log("Elemento \"${elemento.key}\" non convertibile, salto!");
           continue;
         }
+
         type = "\"${elemento.type}\"";
         defaultValue = customTypes[elemento.key].convert(elemento.defaultValue);
       }else {
@@ -139,7 +140,7 @@ class StorageHelper extends StorageHelperBase {""";
       if((elemento.description ?? "") != "") statics += "\n    /// ${elemento.description}";
       statics += "\n    static const String $staticName = \"${elemento.key}\";";
 
-      getSet += "\n    /// Getter and setter per la chiave ${elemento.key}";
+      getSet += "\n    // Getter e setter per la chiave ${elemento.key}";
       if(elemento.onInit) {
         attributes = "\n    dynamic ${elemento.key} = $defaultValue;  // Attributo per prendere il valore della chiave senza fare una chiamata asincrona";
         init += "\n    ${elemento.key} = await get$firstUpper();  // Inserisco inizialmente il valore dentro l'attributo";
