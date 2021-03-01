@@ -138,7 +138,7 @@ class StorageHelper extends StorageHelperBase {""";
       statics += "\n    static const String $staticName = \"${elemento.key}\";";
       if((elemento.description ?? "") != "") statics += "    // ${elemento.description}";
 
-      getSet += "\n    Getter and setter per la chiave ${elemento.key}";
+      getSet += "\n    /// Getter and setter per la chiave ${elemento.key}";
       if(elemento.onInit) {
         attributes = "\n    dynamic ${elemento.key} = $defaultValue;  // Attributo per prendere il valore della chiave senza fare una chiamata asincrona";
         init += "\n    ${elemento.key} = await get$firstUpper();  // Inserisco inizialmente il valore dentro l'attributo";
