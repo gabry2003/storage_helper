@@ -12,6 +12,11 @@ dependencies:
   flutter:
     sdk: flutter
 
+  storage_helper_gen:
+    git:
+      url: https://github.com/gabry2003/storage_helper_gen
+      ref: master
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
