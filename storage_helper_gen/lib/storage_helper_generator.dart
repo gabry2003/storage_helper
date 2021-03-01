@@ -4,6 +4,7 @@ import 'package:source_gen/source_gen.dart';
 import 'package:storage_helper_gen/storage_helper_builder.dart';
 import 'package:storage_helper_gen/storage_helper_custom_type.dart';
 import 'package:storage_helper_gen/storage_helper_element.dart';
+import 'package:storage_helper_gen/storage_helper_model.dart';
 
 class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder> {
   @override
@@ -21,8 +22,9 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       throw InvalidGenerationSourceError("Sorgente non valida!");
     }
 
-    List<StorageHelperElement> elementi = annotation.read('elements').listValue as List<StorageHelperElement>;
-    Map<String, StorageHelperCustomType> customTypes = annotation.read('customTypes').mapValue as Map<String, StorageHelperCustomType>;
+    StorageHelperModel model = annotation.read('model').objectValue as StorageHelperModel;
+    List<StorageHelperElement> elementi = model.elements;
+    Map<String, StorageHelperCustomType> customTypes = model.customTypes;
 
     for(StorageHelperElement elemento in elementi) {
       String staticName = elemento.key.replaceAllMapped(RegExp(r'(?<=[a-z])[A-Z]'), (Match m) => ('_' + m.group(0))).toUpperCase();
