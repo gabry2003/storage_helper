@@ -14,4 +14,12 @@ class StorageHelperElement<T> {
   final String defaultValue;
 
   const StorageHelperElement({this.key, this.type, this.onInit=false, this.description, this.defaultValue});
+
+  Map<String, dynamic> toMap() => {
+    "key": key,
+    "type": type is String ? type : type,
+    "onInit": onInit,
+    "description": description,
+    "defaultValue": defaultValue
+  };
 }

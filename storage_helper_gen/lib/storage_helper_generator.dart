@@ -10,7 +10,9 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
   @override
   generateForAnnotatedElement(
       Element element, ConstantReader annotation, BuildStep buildStep) {
-    print("element is $element");
+    print("[StorageHelperGenerator] start...");
+    print("[StorageHelperGenerator] element:");
+    print(element);
 
     String code = """class StorageHelper {""";
     String getSet = "\n";
@@ -27,6 +29,9 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
     Map<String, StorageHelperCustomType> customTypes = model.customTypes;
 
     for(StorageHelperElement elemento in elementi) {
+      print("[StorageHelperGenerator] Add element:");
+      print(elemento.toMap());
+
       String staticName = elemento.key.replaceAllMapped(RegExp(r'(?<=[a-z])[A-Z]'), (Match m) => ('_' + m.group(0))).toUpperCase();
       String firstUpper = "${elemento.key.toUpperCase()}${elemento.key.substring(1)}";
       String type;
@@ -90,6 +95,8 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
 
     code += """
 }""";
+
+    print("[StorageHelperGenerator] end!");
 
     return code;
   }
