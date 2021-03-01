@@ -23,40 +23,41 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
   ExecutableElement getFunctionValue(DartObject obj, String name) => obj.getField(name).toFunctionValue();
 
   T convert<T>(DartObject obj) {
-    String toString = obj.toString();
+    try {
+      switch(T) {
+        case String:
+          return obj.toStringValue() as T;
+        case bool:
+          return (obj.toBoolValue() ?? false) as T;
+        case int:
+          return obj.toIntValue() as T;
+        case double:
+          return obj.toDoubleValue() as T;
+        case StorageHelperCustomType:
+          return StorageHelperCustomType() as T;
+        case StorageHelperElement:
+          dynamic type;
+          String typeToString = obj.getField("type").toString();
 
-    switch(T) {
-      case String:
-        return obj.toStringValue() as T;
-      case bool:
-        return (obj.toBoolValue() ?? false) as T;
-      case int:
-        return obj.toIntValue() as T;
-      case double:
-        return obj.toDoubleValue() as T;
-      case StorageHelperCustomType:
-        return StorageHelperCustomType() as T;
-      case StorageHelperElement:
-        print("TYPE TO STRING...");
-        print(obj.getField("type").toString());
+          if(typeToString.contains("StorageHelperType")) {  // Se è un tipo di StorageHelper
+            // Etraggo l'indice dell'enum dal toString e accedo al valore dall'enum da qui
+            type = StorageHelperType.values[int.tryParse(typeToString.split("index = ")[1].replaceAll("int (", "").replaceAll(")", ""))];
+          }else {
+            type = getStringValue(obj, "type");
+          }
 
-        return StorageHelperElement(
-          key: getStringValue(obj, "key"),
-          type: toString.contains("String") ? getStringValue(obj, "type") : convert<StorageHelperType>(obj.getField("type")),
-          onInit: getBoolValue(obj, "onInit"),
-          description: getStringValue(obj, "description"),
-          defaultValue: getStringValue(obj, "defaultValue"),
-        ) as T;
-      default:
-        if(toString.contains("StorageHelperType")) {  // Se è un tipo di StorageHelper
-          if(toString.contains("bool")) return StorageHelperType.bool as T;
-          if(toString.contains("int")) return StorageHelperType.int as T;
-          if(toString.contains("double")) return StorageHelperType.double as T;
-          if(toString.contains("DateTime")) return StorageHelperType.DateTime as T;
-          if(toString.contains("String")) return StorageHelperType.String as T;
-        }
-
-        return null;
+          return StorageHelperElement(
+            key: getStringValue(obj, "key"),
+            type: type,
+            onInit: getBoolValue(obj, "onInit"),
+            description: getStringValue(obj, "description"),
+            defaultValue: getStringValue(obj, "defaultValue"),
+          ) as T;
+        default:
+          return null;
+      }
+    } catch(e) {
+      return null;
     }
   }
 
@@ -135,8 +136,8 @@ class StorageHelper extends StorageHelperBase {""";
       String getCode = "await get($type, $staticName, $defaultValue);";
       String setCode = "await set($type, $staticName, val);";
 
+      if((elemento.description ?? "") != "") statics += "\n    /// ${elemento.description}";
       statics += "\n    static const String $staticName = \"${elemento.key}\";";
-      if((elemento.description ?? "") != "") statics += "    // ${elemento.description}";
 
       getSet += "\n    /// Getter and setter per la chiave ${elemento.key}";
       if(elemento.onInit) {
@@ -156,7 +157,7 @@ class StorageHelper extends StorageHelperBase {""";
 
     init += "\n    }";
 
-    code += "\n    /// Attributi statici con i nomi delle chiavi così da poterci accedere anche dall'esterno";
+    code += "\n    // Attributi statici con i nomi delle chiavi così da poterci accedere anche dall'esterno";
     code += statics;
 
     code += "\n \n";
