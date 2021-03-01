@@ -103,7 +103,7 @@ class StorageHelper {""";
 
     for(StorageHelperElement elemento in elementi) {
       String staticName = elemento.key.replaceAllMapped(RegExp(r'(?<=[a-z])[A-Z]'), (Match m) => ('_' + m.group(0))).toUpperCase();
-      String firstUpper = "${elemento.key.toUpperCase()}${elemento.key.substring(1)}";
+      String firstUpper = "${elemento.key[0].toUpperCase()}${elemento.key.substring(1)}";
       String type;
       String defaultValue;
 
@@ -132,13 +132,13 @@ class StorageHelper {""";
         attributes = "\n    dynamic ${elemento.key} = $defaultValue;";
         init += "\n    ${elemento.key} = await get$firstUpper();";
       }else {
-        getSet += "\n    async Future<dynamic> get ${elemento.key} async => $getCode";
+        getSet += "\n    Future<dynamic> get ${elemento.key} async => $getCode";
       }
-      getSet += "\n    async Future<dynamic> get$firstUpper() async => $getCode";
-      getSet += """\n    async Future<void> set$firstUpper(dynamic val) {
+      getSet += "\n    Future<dynamic> get$firstUpper() async => $getCode";
+      getSet += """\n    Future<void> set$firstUpper(dynamic val) {
       $setCode
 }""";
-      getSet += """\n    async Future<void> delete$firstUpper() {
+      getSet += """\n    Future<void> delete$firstUpper() async {
       await set$firstUpper(null);
 }""";
     }
