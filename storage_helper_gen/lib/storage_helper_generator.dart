@@ -47,7 +47,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       default:
         print("TO STRING...");
         print(toString);
-        
+
         if(toString.contains("StorageHelperType")) {  // Se è un tipo di StorageHelper
           if(toString.contains("bool")) return StorageHelperType.bool as T;
           if(toString.contains("int")) return StorageHelperType.int as T;
