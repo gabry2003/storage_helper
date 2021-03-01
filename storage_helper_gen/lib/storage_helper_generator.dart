@@ -45,6 +45,9 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
           defaultValue: getStringValue(obj, "defaultValue"),
         ) as T;
       default:
+        print("TO STRING...");
+        print(toString);
+        
         if(toString.contains("StorageHelperType")) {  // Se è un tipo di StorageHelper
           if(toString.contains("bool")) return StorageHelperType.bool as T;
           if(toString.contains("int")) return StorageHelperType.int as T;
@@ -86,8 +89,9 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       Element element, ConstantReader annotation, BuildStep buildStep) {
     log("start...");
 
-    String code = """import 'package:flutter/cupertino.dart';
-class StorageHelper {""";
+    String code = """part of 'storage_helper.dart';
+
+class StorageHelper extends StorageHelperBase {""";
     String getSet = "\n";
     String statics = "";
     String attributes = "";
@@ -125,9 +129,11 @@ class StorageHelper {""";
       if(defaultValue != null && defaultValue != "null") defaultValue = "\"$defaultValue\"";
 
       String getCode = "await get($type, $staticName, $defaultValue);";
-      String setCode = "await set($staticName, val);";
+      String setCode = "await set($type, $staticName, val);";
 
       statics += "\n    static const String $staticName = \"${elemento.key}\";";
+      if((elemento.description ?? "") != "") statics += "    // ${elemento.description}";
+
       if(elemento.onInit) {
         attributes = "\n    dynamic ${elemento.key} = $defaultValue;";
         init += "\n    ${elemento.key} = await get$firstUpper();";
@@ -135,7 +141,7 @@ class StorageHelper {""";
         getSet += "\n    Future<dynamic> get ${elemento.key} async => $getCode";
       }
       getSet += "\n    Future<dynamic> get$firstUpper() async => $getCode";
-      getSet += """\n    Future<void> set$firstUpper(dynamic val) {
+      getSet += """\n    Future<void> set$firstUpper(dynamic val) async {
       $setCode
 }""";
       getSet += """\n    Future<void> delete$firstUpper() async {
