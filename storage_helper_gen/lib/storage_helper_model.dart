@@ -10,4 +10,13 @@ class StorageHelperModel {
   const StorageHelperModel({this.elements, this.customTypes, this.log=true, this.dateFormat="yyyy-MM-dd"});
 
   StorageHelperCustomType getType(String key) => customTypes[key];
+
+  Map<String, dynamic> get toMap => {
+    "elements": elements.map(
+        (StorageHelperElement element) => element.toMap
+    ).toList(),
+    "customTypes": customTypes,
+    "log": log,
+    "dateFormat": dateFormat
+  };
 }
