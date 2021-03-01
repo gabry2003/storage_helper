@@ -3,6 +3,6 @@ builders:
     import: "package:storage_helper_gen/builder.dart"
     builder_factories: ["storageHelperBuilder"]
     build_extensions: {".dart": ["storage_helper.g.dart"]}
-    auto_apply: dependents
-    build_to: cache
+    auto_apply: root_package
+    build_to: source
     applies_builders: ["source_gen|combining_builder"]
