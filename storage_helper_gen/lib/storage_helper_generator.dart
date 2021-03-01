@@ -89,13 +89,17 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       Element element, ConstantReader annotation, BuildStep buildStep) {
     log("start...");
 
-    String code = """part of 'storage_helper.dart';
+    String code = """/// Author: Gabriele Princiotta
+/// File Helper generato automaticamente che permette di leggere, inserire, eliminare dati utilizzando FlutterSecureStorage in modo facile e con più tipi di variabili
+/// Adesso non sei più limitato alle stringhe!
+    
+part of 'storage_helper.dart';
 
 class StorageHelper extends StorageHelperBase {""";
     String getSet = "\n";
     String statics = "";
     String attributes = "";
-    String init = "\nFuture<void> init() async {";
+    String init = "\n    /// Puoi chiamare questo metodo per inizializzare gli elementi accessibili anche senza metodi asincroni\n    Future<void> init() async {";
 
     StorageHelperModel model = getModel(annotation.read('model').objectValue);
 
@@ -134,23 +138,25 @@ class StorageHelper extends StorageHelperBase {""";
       statics += "\n    static const String $staticName = \"${elemento.key}\";";
       if((elemento.description ?? "") != "") statics += "    // ${elemento.description}";
 
+      getSet += "\n    Getter and setter per la chiave ${elemento.key}";
       if(elemento.onInit) {
-        attributes = "\n    dynamic ${elemento.key} = $defaultValue;";
-        init += "\n    ${elemento.key} = await get$firstUpper();";
+        attributes = "\n    dynamic ${elemento.key} = $defaultValue;  // Attributo per prendere il valore della chiave senza fare una chiamata asincrona";
+        init += "\n    ${elemento.key} = await get$firstUpper();  // Inserisco inizialmente il valore dentro l'attributo";
       }else {
-        getSet += "\n    Future<dynamic> get ${elemento.key} async => $getCode";
+        getSet += "\n    /// Ritorna il valore della chiave ${elemento.key}\n    Future<dynamic> get ${elemento.key} async => $getCode";
       }
-      getSet += "\n    Future<dynamic> get$firstUpper() async => $getCode";
-      getSet += """\n    Future<void> set$firstUpper(dynamic val) async {
+      getSet += "\n    /// Ritorna il valore della chiave ${elemento.key}\n    Future<dynamic> get$firstUpper() async => $getCode";
+      getSet += """\n    /// Setta un valore alla chiave \"${elemento.key}\"\n    Future<void> set$firstUpper(dynamic val) async {
       $setCode
 }""";
-      getSet += """\n    Future<void> delete$firstUpper() async {
+      getSet += """\n    /// Elimina la chiave \"${elemento.key}\"\n    Future<void> delete$firstUpper() async {
       await set$firstUpper(null);
 }""";
     }
 
     init += "\n    }";
 
+    code += "\n    /// Attributi statici con i nomi delle chiavi così da poterci accedere anche dall'esterno";
     code += statics;
 
     code += "\n \n";
@@ -158,8 +164,10 @@ class StorageHelper extends StorageHelperBase {""";
     code += attributes;
 
     code += """
-    StorageHelperModel model;
-    bool doLog;
+    /// Modello
+    final StorageHelperModel model;
+    /// Se effettuare il log con le operazioni di lettura e scrittura
+    final bool doLog;
     
     StorageHelper({@required this.model, this.doLog=true}) : super(
         model: model,
@@ -169,7 +177,9 @@ class StorageHelper extends StorageHelperBase {""";
     code += getSet;
 
     code += """
+    /// Elimina tutti gli elementi da FlutterSecureStorage
     Future<void> deleteAll() async {
+        log("Elimino tutto...);
         await storage.deleteAll();
     }
 """;
