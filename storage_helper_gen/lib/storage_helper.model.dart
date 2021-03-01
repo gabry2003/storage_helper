@@ -1,5 +1,5 @@
-import 'package:storage_helper/storage_helper_custom_type.dart';
-import 'package:storage_helper/storage_helper_element.dart';
+import 'package:storage_helper_gen/storage_helper_custom_type.dart';
+import 'package:storage_helper_gen/storage_helper_element.dart';
 
 class StorageHelperModel {
   final List<StorageHelperElement> elements;

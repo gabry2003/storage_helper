@@ -1,5 +1,3 @@
-import 'package:flutter/cupertino.dart';
-
 /// Modello di un elemento StorageHelper
 /// Passare il la classe del tipo di dato
 class StorageHelperElement<T> {
@@ -15,5 +13,5 @@ class StorageHelperElement<T> {
   /// Valore di default dell'elemento (opzionale)
   final String defaultValue;
 
-  const StorageHelperElement({@required this.key, @required this.type, this.onInit=false, this.description, this.defaultValue});
+  const StorageHelperElement({this.key, this.type, this.onInit=false, this.description, this.defaultValue});
 }

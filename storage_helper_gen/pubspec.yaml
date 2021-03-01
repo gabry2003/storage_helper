@@ -1,26 +1,17 @@
-name: storage_helper
-description: Package che permette di utilizzare FlutterSecureStorage con più tipi di dati
+name: storage_helper_gen
+description: Generatore per StorageHelper
 version: 0.0.1
 author: Gabriele Princiotta
-homepage: https://github.com/gabry2003/storage_helper
+homepage:
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
-  flutter: ">=1.17.0"
 
 dependencies:
-  flutter:
-    sdk: flutter
-
   build: ^1.6.2
   source_gen: ^0.9.10+3
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
-
-  flutter_secure_storage: ^3.3.5
-  intl: ^0.15.7
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

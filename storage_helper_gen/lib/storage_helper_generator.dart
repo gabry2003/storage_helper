@@ -1,9 +1,9 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
-import 'package:storage_helper/storage_helper_builder.dart';
-import 'package:storage_helper/storage_helper_custom_type.dart';
-import 'package:storage_helper/storage_helper_element.dart';
+import 'package:storage_helper_gen/storage_helper_builder.dart';
+import 'package:storage_helper_gen/storage_helper_custom_type.dart';
+import 'package:storage_helper_gen/storage_helper_element.dart';
 
 class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder> {
   @override

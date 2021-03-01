@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
-import 'package:storage_helper/storage_helper.model.dart';
-import 'package:storage_helper/storage_helper_type.dart';
 
 class StorageHelperBase {
   final StorageHelperModel model;
