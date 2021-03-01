@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:storage_helper/storage_helper_type.dart';
 
 /// Modello di un elemento StorageHelper
 /// Passare il la classe del tipo di dato
@@ -16,7 +15,5 @@ class StorageHelperElement<T> {
   /// Valore di default dell'elemento (opzionale)
   final String defaultValue;
 
-  StorageHelperElement({@required this.key, @required this.type, this.onInit=false, this.description, this.defaultValue}) {
-    assert(T is String || T is StorageHelperType);
-  }
+  const StorageHelperElement({@required this.key, @required this.type, this.onInit=false, this.description, this.defaultValue});
 }

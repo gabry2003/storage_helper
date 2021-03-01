@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:storage_helper/storage_helper_custom_type.dart';
 import 'package:storage_helper/storage_helper_element.dart';
 
@@ -8,7 +7,7 @@ class StorageHelperModel {
   final bool log;
   final String dateFormat;
 
-  const StorageHelperModel({@required this.elements, this.customTypes, this.log=true, this.dateFormat="yyyy-MM-dd"});
+  const StorageHelperModel({this.elements, this.customTypes, this.log=true, this.dateFormat="yyyy-MM-dd"});
 
   StorageHelperCustomType getType(String key) => customTypes[key];
 }
