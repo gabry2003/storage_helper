@@ -37,9 +37,6 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       case StorageHelperCustomType:
         return StorageHelperCustomType() as T;
       case StorageHelperElement:
-        print("to string...");
-
-        print(obj.getField("name").toString());
         return StorageHelperElement(
           key: getStringValue(obj, "key"),
           type: toString.contains("String") ? getStringValue(obj, "type") : convert<StorageHelperType>(obj.getField("type")),
@@ -112,7 +109,9 @@ class StorageHelper {""";
 
       if(elemento.type is String) { // Se l'elemento ha un tipo personalizzato
         // Controllo che la funzione ci sia
-        if(customTypes[elemento.key].convert == null) {
+        try {
+          if(customTypes[elemento.key].convert == null) throw new Exception();
+        } catch(e) {
           log("Elemento non convertibile, salto!");
           continue;
         }
