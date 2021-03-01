@@ -37,6 +37,9 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       case StorageHelperCustomType:
         return StorageHelperCustomType() as T;
       case StorageHelperElement:
+        print("TYPE TO STRING...");
+        print(obj.getField("type").toString());
+
         return StorageHelperElement(
           key: getStringValue(obj, "key"),
           type: toString.contains("String") ? getStringValue(obj, "type") : convert<StorageHelperType>(obj.getField("type")),
@@ -45,9 +48,6 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
           defaultValue: getStringValue(obj, "defaultValue"),
         ) as T;
       default:
-        print("TO STRING...");
-        print(toString);
-
         if(toString.contains("StorageHelperType")) {  // Se è un tipo di StorageHelper
           if(toString.contains("bool")) return StorageHelperType.bool as T;
           if(toString.contains("int")) return StorageHelperType.int as T;
@@ -179,7 +179,7 @@ class StorageHelper extends StorageHelperBase {""";
     code += """
     /// Elimina tutti gli elementi da FlutterSecureStorage
     Future<void> deleteAll() async {
-        log("Elimino tutto...);
+        log("Elimino tutto...");
         await storage.deleteAll();
     }
 """;
