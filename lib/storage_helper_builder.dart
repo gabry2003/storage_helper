@@ -1,7 +1,7 @@
 import 'package:storage_helper/storage_helper.model.dart';
 
 class StorageHelperBuilder {
-  StorageHelperModel model;
+  final StorageHelperModel model;
 
-  StorageHelperBuilder(model);
+  const StorageHelperBuilder(this.model);
 }

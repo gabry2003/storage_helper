@@ -8,7 +8,7 @@ class StorageHelperModel {
   final bool log;
   final String dateFormat;
 
-  StorageHelperModel({@required this.elements, this.customTypes, this.log=true, this.dateFormat="yyyy-MM-dd"});
+  const StorageHelperModel({@required this.elements, this.customTypes, this.log=true, this.dateFormat="yyyy-MM-dd"});
 
   StorageHelperCustomType getType(String key) => customTypes[key];
 }
