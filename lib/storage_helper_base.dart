@@ -7,10 +7,9 @@ import 'package:storage_helper/storage_helper_type.dart';
 class StorageHelperBase {
   final StorageHelperModel model;
   final bool doLog;
-  final String format;
   FlutterSecureStorage storage;
 
-  StorageHelperBase({@required this.model, this.doLog = true, this.format="yyyy-MM-dd"}) {
+  StorageHelperBase({@required this.model, this.doLog = true}) {
     storage = new FlutterSecureStorage();
   }
 
@@ -33,7 +32,7 @@ class StorageHelperBase {
           return double.tryParse(val);
           break;
         case StorageHelperType.DateTime:
-          return new DateFormat(format).parse(val);
+          return new DateFormat(model.dateFormat).parse(val);
           break;
         case StorageHelperType.String:
           return val;
@@ -54,7 +53,7 @@ class StorageHelperBase {
         return val?.toString();
         break;
       case StorageHelperType.DateTime:
-        return new DateFormat(format).format(val);
+        return new DateFormat(model.dateFormat).format(val);
         break;
       case StorageHelperType.String:
         return val;
