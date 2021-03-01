@@ -14,7 +14,8 @@ dependencies:
 
   storage_helper_gen:
     git:
-      url: https://github.com/gabry2003/storage_helper/storage_helper_gen/
+      url: https://github.com/gabry2003/storage_helper/
+      path: storage_helper_gen
       ref: master
 
 dev_dependencies:

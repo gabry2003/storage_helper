@@ -37,7 +37,7 @@ packages:
     source: hosted
     version: "2.1.0-nullsafety.1"
   build:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: build
       url: "https://pub.dartlang.org"
@@ -220,7 +220,7 @@ packages:
     source: sdk
     version: "0.0.99"
   source_gen:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: source_gen
       url: "https://pub.dartlang.org"
@@ -240,6 +240,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.10.0-nullsafety.1"
+  storage_helper_gen:
+    dependency: "direct main"
+    description:
+      path: storage_helper_gen
+      ref: master
+      resolved-ref: "987cdac0706a089956e465a54f042006289c2cab"
+      url: "https://github.com/gabry2003/storage_helper/"
+    source: git
+    version: "0.0.1"
   stream_channel:
     dependency: transitive
     description:
