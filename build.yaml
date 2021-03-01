@@ -1,6 +1,5 @@
 builders:
   storage_helper_build:
-    target: ":storage_helper"
     import: "package:storage_helper/builder.dart"
     builder_factories: ["storageHelperBuilder"]
     build_extensions: {".dart": ["model/storage_helper/storage_helper.g.part"]}
