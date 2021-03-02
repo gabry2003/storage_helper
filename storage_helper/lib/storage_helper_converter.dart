@@ -8,53 +8,45 @@ class StorageHelperConverter {
 
   StorageHelperConverter(this.model);
 
-  dynamic convert(dynamic type, String val) {
-    if(type is String) { // Se l'elemento è di un tipo personalizzato
-      return model.getType(type).convert(val);
-    }else { // Altrimenti converto con i tipi normali
-      switch(type) {
-        case StorageHelperType.bool:
-          return val == "1";
-          break;
-        case StorageHelperType.int:
-          return int.tryParse(val);
-          break;
-        case StorageHelperType.double:
-          return double.tryParse(val);
-          break;
-        case StorageHelperType.DateTime:
-          return new DateFormat(model.dateFormat).parse(val);
-          break;
-        case StorageHelperType.String:
-          return val;
-          break;
-        default:
-          return null;
-      }
+  T convert<T>(String val) {
+    switch(T.toString()) {
+      case "bool":
+        return (val == "1") as T;
+        break;
+      case "int":
+        return int.tryParse(val) as T;
+        break;
+      case "double":
+        return double.tryParse(val) as T;
+        break;
+      case "DateTime":
+        return (new DateFormat(model.dateFormat).parse(val)) as T;
+        break;
+      case "String":
+        return val as T;
+        break;
+      default:
+        return model.getType(T.toString())?.convert(val);
     }
   }
 
-  String reConvert(dynamic type, dynamic val) {
-    switch(type) {
-      case StorageHelperType.bool:
+  String reConvert<T>(dynamic val) {
+    switch(T.toString()) {
+      case "bool":
         return ((val as bool) ?? false) ? "1" : "0";
         break;
-      case StorageHelperType.int:
-      case StorageHelperType.double:
+      case "int":
+      case "double":
         return val?.toString();
         break;
-      case StorageHelperType.DateTime:
+      case "DateTime":
         return new DateFormat(model.dateFormat).format(val);
         break;
-      case StorageHelperType.String:
+      case "String":
         return val;
         break;
       default:
-        if(type is String) { // Se l'elemento è di un tipo personalizzato
-          return model.getType(type).reConvert(val);
-        }else { // Altrimenti torno null
-          return null;
-        }
+        return model.getType(T.toString()).reConvert(val);
     }
   }
 }

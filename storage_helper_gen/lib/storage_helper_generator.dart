@@ -145,8 +145,8 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
         }
       }
 
-      String getCode = "await get($type, $nameForGet, $defaultValue);";
-      String setCode = "await set($type, $nameForGet, val);";
+      String getCode = "await get<$variableType>($nameForGet, $defaultValue);";
+      String setCode = "await set<$variableType>($nameForGet, ${elemento.key});";
 
       if((elemento.description?.length ?? 0) > 0) for(String desc in elemento.description) statics += "\n    /// $desc";
       statics += "\n    static const String $staticName = \"${elemento.key}\";";
@@ -169,17 +169,14 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
           "    /// ```dart\n"
           "    /// $variableType ${elemento.key} = await $objName.get$firstUpper();\n"
           "    /// ```\n"
-          "    Future<$variableType> get$firstUpper() async => $getCode";
-      getSet += """\n\n    /// Insert a value into key \"${elemento.key}\"\n    Future<void> set$firstUpper($variableType val) async {
-      $setCode
-    }""";
-      getSet += "\n\n    /// Delete key \"${elemento.key}\"\n"
+          "    Future<$variableType> get$firstUpper() async => $getCode"
+          "\n\n    /// Insert a value into key \"${elemento.key}\"\n"
+          "    Future<bool> set$firstUpper($variableType ${elemento.key}) async $setCode"
+          "\n\n    /// Delete key \"${elemento.key}\"\n"
           "    /// ```dart\n"
           "    /// await storageHelper.delete$firstUpper():\n"
           "    /// ```\n"
-          "    Future<void> delete$firstUpper() async {\n"
-          "        await set$firstUpper(null);\n"
-          "    }";
+          "    Future<bool> delete$firstUpper() async => await set$firstUpper(null);";
     }
 
     init += "\n    }";

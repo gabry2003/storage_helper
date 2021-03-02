@@ -15,15 +15,15 @@ class StorageHelperBase {
     if(model.log) print("[StorageHelper]"); print(val);
   }
 
-  Future<dynamic> convertEl(dynamic type, String key, [dynamic defaultValue]) async {
+  Future<T> convertEl<T>(String key, [T defaultValue]) async {
     try {
       String val = await storage.read(
           key: key
-      ) ?? converter.reConvert(type, defaultValue);
+      ) ?? converter.reConvert<T>(defaultValue);
 
       if(val == null) return null;
 
-      return converter.convert(type, val);
+      return converter.convert<T>(val);
     } catch(e, stacktrace) {
       print(e);
       print(stacktrace);
@@ -32,12 +32,12 @@ class StorageHelperBase {
     }
   }
 
-  Future<bool> set(dynamic type, String key, dynamic val) async {
+  Future<bool> set<T>(String key, T val) async {
     try {
       if(val != null) {
         await storage.write(
             key: key,
-            value: converter.reConvert(type, val)
+            value: converter.reConvert<T>(val)
         );
 
         log("\"$key\" = ");
@@ -56,11 +56,11 @@ class StorageHelperBase {
     }
   }
 
-  Future<dynamic> get(dynamic type, String key, [dynamic defaultValue]) async {
+  Future<T> get<T>(String key, [T defaultValue]) async {
     try {
       log("getting \"$key\"...");
 
-      dynamic val = await convertEl(type, key, defaultValue);
+      dynamic val = await convertEl<T>(key, defaultValue);
 
       log("\"$key\" = ");
       log(val);
