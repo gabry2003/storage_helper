@@ -56,7 +56,9 @@ class StorageHelperGenConverter {
               List<String> split = typeToString.split("index = ");
               String index = split[1].replaceAll("int (", "").replaceAll(")", "");
               type = StorageHelperType.values[int.tryParse(index)];
-            } catch(e) {
+            } catch(e, stacktrace) {
+              print(e);
+              print(stacktrace);
               throw new Exception("Impossibile prendere il tipo dell'elemento!");
             }
 
