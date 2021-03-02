@@ -46,12 +46,13 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       className += upperFirst(category.key);
 
       String attributesCode = "\n    // Use this attribute to access to sub-category ${category.key}";
-      if((category.description?.length ?? 0) > 0) for(String desc in category.description) attributesCode += "\n    // $desc";
-      attributesCode += "\n    $className ${category.key} = new $className(model);";
+      if((category.description?.length ?? 0) > 0) for(String desc in category.description) attributesCode += "\n    /// $desc";
+      attributesCode += "\n    $className ${category.key};";
 
       categoriesAttributes.add(StorageHelperCategoryChild(
           parent: category.parent,
-          code: attributesCode
+          code: attributesCode,
+          constructor: "\n        $className = new $className(model);"
       ));
     }else {
       if(countAnonymous > 0) throw new Exception("Insert a key for the category");
@@ -134,7 +135,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
     /// Model from storage_helper.dart
     StorageHelperModel model;
     
-    $className(this.model) : super(model);""";
+    $className(this.model) : super(model) {\n{{costruttore${index.toString()}}\n}""";
 
     code += getSet;
 
@@ -169,8 +170,10 @@ part of 'storage_helper.dart';
 
     StorageHelperModel model = getModel(annotation.read('model').objectValue);
 
-    log("Model:");
-    print(model.toMap);
+    // Decomment for print model
+    // Use in test
+    //log("Model:");
+    //print(model.toMap);
 
     for(int i = 0;i < model.categories.length;i++) { // Per ogni categoria aggiungo la classe
       if(model.categories[i] == null) throw new Exception("Insert all categories!");
@@ -179,16 +182,25 @@ part of 'storage_helper.dart';
 
     // Per ogni categoria inserisco gli attributi per le sottocategorie
     for(int i = 0;i < model.categories.length;i++) {
-      String replace = "";
-      String from = "{{sottoCategorie${i.toString()}}";
+      String replace1 = "";
+      String from1 = "{{sottoCategorie${i.toString()}}";
+      String replace2 = "";
+      String from2 = "{{costruttore${i.toString()}}";
 
       try {
         for(StorageHelperCategoryChild child in categoriesAttributes.where(
                 (StorageHelperCategoryChild child) => child.parent == model.categories[i].key
-        ).toList()) replace += "\n${child.code}";
-      } catch(e) {}
+        ).toList()) {
+          if(child.code != null) replace1 += "\n${child.code}";
+          if(child.constructor != null) replace2 += "\n${child.constructor}";
+        }
+      } catch(e, stacktrace) {
+        print(e);
+        print(stacktrace);
+      }
 
-      code = code.replaceAll(from, replace);
+      code = code.replaceAll(from1, replace1);
+      code = code.replaceAll(from2, replace2);
     }
 
     log("end!");

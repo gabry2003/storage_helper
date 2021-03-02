@@ -78,7 +78,7 @@ class StorageHelperGenConverter {
                 defaultValue = DateTime.parse(defaultValueToString.substring(0, defaultValueToString.length - 1).replaceAll("DateTime (", ""));
               }else if(defaultValueToString.contains("String")) {  // Se è un String
                 defaultValue = defaultValueToString.substring(0, defaultValueToString.length - 1).replaceAll("String (", "");
-                defaultValue = defaultValue.substring(0, defaultValueToString.length - 1);  // RImuovo l'ultimo carattere (apice)
+                defaultValue = defaultValue.substring(0, defaultValue.length - 1);  // RImuovo l'ultimo carattere (apice)
                 defaultValue = defaultValue.substring(1); // Rimuovo il primo carattere (apice)
               }
             } catch(e) {
