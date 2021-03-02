@@ -15,6 +15,7 @@ class StorageHelperElement<T> {
   /// Descrizione dell'elemento, ogni elmeento della lista è una riga della descrizione (opzionale)
   final List<String> description;
   /// Valore di default dell'elemento (opzionale)
+  /// Al momento non funziona sugli elementi con un tipo personalizzato
   final dynamic defaultValue;
 
   const StorageHelperElement({this.key, this.staticKey, this.concateneKeys, this.type, this.onInit=false, this.description, this.defaultValue});

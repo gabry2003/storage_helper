@@ -26,7 +26,11 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
     print("[STORAGE_HELPER_GENERATOR] $msg");
   }
 
-  StorageHelperModel getModel(DartObject obj) => converter.convert<StorageHelperModel>(obj);
+  StorageHelperModel getModel(DartObject obj) => StorageHelperModel(
+      categories: converter.getList<StorageHelperCategory>(converter.getListValue(obj, "categories")),
+      log: converter.getBoolValue(obj, "log"),
+      dateFormat: converter.getStringValue(obj, "dateFormat")
+  );
 
   String upperFirst(String text) => "${text[0].toUpperCase()}${text.substring(1)}";
   String constantName(String text) => text.replaceAllMapped(RegExp(r'(?<=[a-z])[A-Z]'), (Match m) => ('_' + m.group(0))).toUpperCase();
@@ -74,16 +78,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       String defaultValue;
 
       if(elemento.type is String) { // Se l'elemento ha un tipo personalizzato
-        // Controllo che la funzione ci sia
-        try {
-          if(customTypes[elemento.key].convert == null) throw new Exception();
-        } catch(e) {
-          log("Non-convertible item \"${elemento.key}\", skip!");
-          continue;
-        }
-
         type = "\"${elemento.type}\"";
-        defaultValue = customTypes[elemento.key].convert(elemento.defaultValue);
       }else {
         type = elemento.type.toString();
         defaultValue = elemento.defaultValue.toString();

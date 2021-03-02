@@ -34,15 +34,6 @@ class StorageHelperGenConverter {
           return obj.toIntValue() as T;
         case double:
           return obj.toDoubleValue() as T;
-        case StorageHelperCustomType:
-          return StorageHelperCustomType() as T;
-        case StorageHelperModel:
-          return StorageHelperModel(
-              customTypes: getMap<String, StorageHelperCustomType>(getMapValue(obj, "customTypes")),
-              categories: getList<StorageHelperCategory>(getListValue(obj, "categories")),
-              log: getBoolValue(obj, "log"),
-              dateFormat: getStringValue(obj, "dateFormat")
-          ) as T;
         case StorageHelperCategory:
           return StorageHelperCategory(
             key: getStringValue(obj, "key"),
@@ -74,6 +65,7 @@ class StorageHelperGenConverter {
           return null;
       }
     } catch(e) {
+      print(e);
       return null;
     }
   }
