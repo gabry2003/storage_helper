@@ -33,6 +33,7 @@ class StorageHelperGenConverter {
           return obj.toDoubleValue() as T;
         case StorageHelperCategory:
           return StorageHelperCategory(
+            parent: getStringValue(obj, "parent"),
             key: getStringValue(obj, "key"),
             description: getList<String>(getListValue(obj, "description")),
             elements: getList<StorageHelperElement>(getListValue(obj, "elements")),
@@ -77,9 +78,9 @@ class StorageHelperGenConverter {
                 defaultValue = DateTime.parse(defaultValueToString.substring(0, defaultValueToString.length - 1).replaceAll("DateTime (", ""));
               }else if(defaultValueToString.contains("String")) {  // Se è un String
                 defaultValue = defaultValueToString.substring(0, defaultValueToString.length - 1).replaceAll("String (", "");
+                defaultValue = defaultValue.substring(0, defaultValueToString.length - 1);  // RImuovo l'ultimo carattere (apice)
+                defaultValue = defaultValue.substring(1); // Rimuovo il primo carattere (apice)
               }
-
-              if(defaultValue == "''") defaultValue = "";
             } catch(e) {
               log("Impossibile prendere il valore di defaullt dell'elemento \"$key\"");
             }

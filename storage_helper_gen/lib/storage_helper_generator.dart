@@ -37,12 +37,17 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
 
   String createClass(int index, StorageHelperCategory category) {
     String className = "StorageHelper";
+    String objName = "storageHelper";
+
     if(category.key != null) {  // Se è presente la chiave della categoria
+      if(category.parent != null) objName += ".${category.parent}";
+      objName += ".${category.key}";
+
       className += upperFirst(category.key);
 
       String attributesCode = "\n    // Use this attribute to access to sub-category ${category.key}";
       if((category.description?.length ?? 0) > 0) for(String desc in category.description) attributesCode += "\n    // $desc";
-      attributesCode += "\n    $className ${category.key} = new $className(model: model);";
+      attributesCode += "\n    $className ${category.key} = new $className(model);";
 
       categoriesAttributes.add(StorageHelperCategoryChild(
           parent: category.parent,
@@ -105,9 +110,9 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
         attributes += "\n    dynamic ${elemento.key} = $defaultValue;  // Attribute to take the key value without making an asynchronous call";
         init += "\n        ${elemento.key} = await get$firstUpper();  // Initially put the value inside the attribute";
       }else {
-        getSet += "\n\n    /// Return key's value ${elemento.key}\n    /// await storageHelper.${elemento.key} return value \n    Future<dynamic> get ${elemento.key} async => $getCode";
+        getSet += "\n\n    /// Return key's value ${elemento.key}\n    /// await $objName.${elemento.key} return value \n    Future<dynamic> get ${elemento.key} async => $getCode";
       }
-      getSet += "\n\n    /// Return key's value ${elemento.key}\n    /// await storageHelper.get$firstUpper() return value \n    Future<dynamic> get$firstUpper() async => $getCode";
+      getSet += "\n\n    /// Return key's value ${elemento.key}\n    /// await $objName.get$firstUpper() return value \n    Future<dynamic> get$firstUpper() async => $getCode";
       getSet += """\n\n    /// Insert a value into key \"${elemento.key}\"\n    Future<void> set$firstUpper(dynamic val) async {
       $setCode
     }""";
@@ -178,11 +183,9 @@ part of 'storage_helper.dart';
       String from = "{{sottoCategorie${i.toString()}}";
 
       try {
-        List<StorageHelperCategoryChild> all = categoriesAttributes.where(
+        for(StorageHelperCategoryChild child in categoriesAttributes.where(
                 (StorageHelperCategoryChild child) => child.parent == model.categories[i].key
-        ).toList();
-
-        for(StorageHelperCategoryChild child in all) replace += "\n${child.code}";
+        ).toList()) replace += "\n${child.code}";
       } catch(e) {}
 
       code = code.replaceAll(from, replace);
