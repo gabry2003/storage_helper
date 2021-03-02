@@ -5,6 +5,8 @@ class StorageHelperElement<T> {
   final String key;
   /// Chiave da inserire nella variabile static
   final String staticKey;
+  /// Nome dell'attributo per i getter e i setter (opzionale)
+  final String getKey;
   /// Chiavi da concatenare nei getter e nei setter
   final List<String> concateneKeys;
   /// Tipo di dato dell'elemento
@@ -20,11 +22,12 @@ class StorageHelperElement<T> {
   /// new Pippo(55)
   final dynamic defaultValue;
 
-  const StorageHelperElement({this.key, this.staticKey, this.concateneKeys, this.type, this.onInit=false, this.description, this.defaultValue});
+  const StorageHelperElement({this.key, this.staticKey, this.getKey, this.concateneKeys, this.type, this.onInit=false, this.description, this.defaultValue});
 
   Map<String, dynamic> get toMap => {
     "key": key,
     "staticKey": staticKey,
+    "getKey": getKey,
     "concateneKeys": concateneKeys,
     "type": type,
     "onInit": onInit,

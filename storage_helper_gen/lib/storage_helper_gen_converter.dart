@@ -91,6 +91,7 @@ class StorageHelperGenConverter {
           return StorageHelperElement(
             key: key,
             staticKey: getStringValue(obj, "staticKey"),
+            getKey: getStringValue(obj, "getKey"),
             concateneKeys: getList<String>(getListValue(obj, "concateneKeys")),
             type: type,
             onInit: getBoolValue(obj, "onInit"),

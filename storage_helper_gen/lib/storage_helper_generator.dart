@@ -107,7 +107,8 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
 
       String variableType = "var";
 
-      String firstUpper = upperFirst(elemento.key);
+      String getKey = elemento.getKey ?? elemento.key;
+      String firstUpper = upperFirst(getKey);
       String type;
       String defaultValue;
 
@@ -154,15 +155,15 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       getSet += "\n\n    // Getter and setter for the key ${elemento.key}";
       if(elemento.onInit) {
         if((elemento.description?.length ?? 0) > 0) for(String desc in elemento.description) attributes += "\n    /// $desc";
-        attributes += "\n    $variableType ${elemento.key} = $defaultValue;  // Attribute to take the key value without making an asynchronous call";
+        attributes += "\n    $variableType $getKey = $defaultValue;  // Attribute to take the key value without making an asynchronous call";
         init += "\n        ${elemento.key} = await get$firstUpper();  // Initially put the value inside the attribute";
       }else {
         getSet += "\n\n    /// Return value of ${elemento.key}\n"
             "    /// Return a variable of type \"$variableType\"\n"
             "    /// ```dart\n"
-            "    /// $variableType ${elemento.key} = await $objName.${elemento.key};\n"
+            "    /// $variableType $getKey = await $objName.${elemento.key};\n"
             "    /// ```\n"
-            "    Future<$variableType> get ${elemento.key} async => $getCode";
+            "    Future<$variableType> get $getKey async => $getCode";
       }
       getSet += "\n\n    /// Return value of ${elemento.key}\n"
           "    /// Return a variable of type \"$variableType\"\n"
@@ -171,6 +172,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
           "    /// ```\n"
           "    Future<$variableType> get$firstUpper() async => $getCode"
           "\n\n    /// Insert a value into key \"${elemento.key}\"\n"
+          "    /// Require variable ${elemento.key} of type ${variableType}\n"
           "    Future<bool> set$firstUpper($variableType ${elemento.key}) async => $setCode"
           "\n\n    /// Delete key \"${elemento.key}\"\n"
           "    /// ```dart\n"
