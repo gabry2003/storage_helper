@@ -67,7 +67,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
     code += """\nclass $className extends StorageHelperBase {""";
     String getSet = "\n";
     String statics = "";
-    String attributes = "{{sottoCategorie${index.toString()}}";
+    String attributes = "{{sottoCategorie${index.toString()}}}";
     String init = "\n    /// You can call this method to initialize accessible elements even without asynchronous methods\n    Future<void> init() async {";
 
     for(StorageHelperElement elemento in elementi) {
@@ -135,7 +135,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
     /// Model from storage_helper.dart
     StorageHelperModel model;
     
-    $className(this.model) : super(model){{costruttore${index.toString()}}""";
+    $className(this.model) : super(model){{costruttore${index.toString()}}}""";
 
     code += getSet;
 
@@ -183,25 +183,23 @@ part of 'storage_helper.dart';
     // Per ogni categoria inserisco gli attributi per le sottocategorie
     for(int i = 0;i < model.categories.length;i++) {
       String replace1 = "";
-      String from1 = "{{sottoCategorie${i.toString()}}";
+      String from1 = "{{sottoCategorie${i.toString()}}}";
       String replace2 = "";
-      String from2 = "{{costruttore${i.toString()}}";
+      String from2 = "{{costruttore${i.toString()}}}";
 
       try {
         for(StorageHelperCategoryChild child in categoriesAttributes.where(
                 (StorageHelperCategoryChild child) => child.parent == model.categories[i].key
         ).toList()) {
           if(child.code != null) replace1 += "\n${child.code}";
-          if(child.constructor != null) {
-            replace2 += " {\n${child.constructor}\n    }";
-          }else {
-            replace2 += ";";
-          }
+          if(child.constructor != null) replace2 += " {\n${child.constructor}\n    }";
         }
       } catch(e, stacktrace) {
         print(e);
         print(stacktrace);
       }
+
+      if(replace2 == "") replace2 = ";";
 
       code = code.replaceAll(from1, replace1);
       code = code.replaceAll(from2, replace2);
