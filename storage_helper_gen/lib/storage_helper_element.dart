@@ -3,6 +3,10 @@
 class StorageHelperElement<T> {
   /// Chiave identificativa dell'elemento
   final String key;
+  /// Chiave da inserire nella variabile static
+  final String staticKey;
+  /// Chiavi da concatenare nei getter e nei setter
+  final List<String> concateneKeys;
   /// Tipo di dato dell'elemento
   final T type;
   /// Se l'elemento deve essere inserito come attributo e deve essere inizializzato nel metodo init
@@ -13,10 +17,12 @@ class StorageHelperElement<T> {
   /// Valore di default dell'elemento (opzionale)
   final dynamic defaultValue;
 
-  const StorageHelperElement({this.key, this.type, this.onInit=false, this.description, this.defaultValue});
+  const StorageHelperElement({this.key, this.staticKey, this.concateneKeys, this.type, this.onInit=false, this.description, this.defaultValue});
 
   Map<String, dynamic> get toMap => {
     "key": key,
+    "staticKey": staticKey,
+    "concateneKeys": concateneKeys,
     "type": type,
     "onInit": onInit,
     "description": description,

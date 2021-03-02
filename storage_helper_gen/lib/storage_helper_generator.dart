@@ -61,7 +61,12 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
     for(StorageHelperElement elemento in elementi) {
       if((elemento.key ?? "") == "") throw new Exception("Chiave dell'elemento non valida!");
 
-      String staticName = constantName(elemento.key);
+      String staticName = elemento.staticKey ?? constantName(elemento.key);
+      String nameForGet = staticName;
+      for(int i = 0;i < (elemento.concateneKeys?.length ?? 0);i++) {
+        nameForGet += " + ${elemento.concateneKeys[i]}";
+      }
+
       String firstUpper = upperFirst(elemento.key);
       String type;
       String defaultValue;
@@ -84,8 +89,8 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
 
       if(defaultValue != null && defaultValue != "null") defaultValue = "\"$defaultValue\"";
 
-      String getCode = "await get($type, $staticName, $defaultValue);";
-      String setCode = "await set($type, $staticName, val);";
+      String getCode = "await get($type, $nameForGet, $defaultValue);";
+      String setCode = "await set($type, $nameForGet, val);";
 
       if((elemento.description?.length ?? 0) > 0) for(String desc in elemento.description) statics += "\n    // $desc";
       statics += "\n    static const String $staticName = \"${elemento.key}\";";
@@ -133,8 +138,12 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
     }
 """;
 
-    code += init;
+    if(category.addSource != null) {
+      code += "\n    // Additional code\n${category.addSource}";
+    }
 
+    code += init;
+    ///
     code += """
 }""";
 

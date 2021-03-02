@@ -8,15 +8,18 @@ class StorageHelperCategory {
   final String key;
   /// Descrizione della categoria, ogni elemento è una riga della descrizione (opzionale)
   final List<String> description;
+  /// Codice opzionale da aggiungere
+  final String addSource;
   /// Elementi della categoria
   final List<StorageHelperElement> elements;
 
-  const StorageHelperCategory({this.parent, this.key, this.description, this.elements});
+  const StorageHelperCategory({this.parent, this.key, this.description, this.addSource, this.elements});
 
   Map<String, dynamic> get toMap => {
     "parent": parent,
     "key": key,
     "description": description,
+    "addSource": addSource,
     "elements": elements.map(
             (StorageHelperElement element) => element.toMap
     )

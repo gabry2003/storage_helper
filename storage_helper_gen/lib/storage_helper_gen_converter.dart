@@ -39,7 +39,8 @@ class StorageHelperGenConverter {
           return new StorageHelperCategory(
             key: getStringValue(obj, "key"),
             description: getList<String>(getListValue(obj, "description")),
-            elements: getList<StorageHelperElement>(getListValue(obj, "elements"))
+            elements: getList<StorageHelperElement>(getListValue(obj, "elements")),
+            addSource: getStringValue(obj, "addSource")
           ) as T;
         case StorageHelperElement:
           dynamic type;
@@ -54,6 +55,8 @@ class StorageHelperGenConverter {
 
           return StorageHelperElement(
             key: getStringValue(obj, "key"),
+            staticKey: getStringValue(obj, "staticKey"),
+            concateneKeys: getList<String>(getListValue(obj, "concateneKeys")),
             type: type,
             onInit: getBoolValue(obj, "onInit"),
             description: getList<String>(getListValue(obj, "description")),
