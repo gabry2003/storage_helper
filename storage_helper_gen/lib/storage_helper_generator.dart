@@ -8,12 +8,13 @@ import 'package:storage_helper_gen/storage_helper_category_child.dart';
 import 'package:storage_helper_gen/storage_helper_element.dart';
 import 'package:storage_helper_gen/storage_helper_gen_converter.dart';
 import 'package:storage_helper_gen/storage_helper_model.dart';
-import 'package:storage_helper_gen/storage_helper_type.dart';
 
 class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder> {
   StorageHelperGenConverter converter = new StorageHelperGenConverter();
   /// Sotto categorie
   List<StorageHelperCategoryChild> categoriesAttributes = [];
+  /// Esempi per le sotto categorie
+  String subCategoriesExample = "";
   /// Numero di categorie senza chiave
   int countAnonymous = 0;
 
@@ -42,6 +43,8 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
     if(category.key != null) {  // Se è presente la chiave della categoria
       if(category.parent != null) objName += ".${category.parent}";
       objName += ".${category.key}";
+
+      subCategoriesExample += "\n///    `$className ${category.key} = new $className(storageModel);`\n///    `$className ${category.key}2 = ${category.parent != null ? category.parent : "storageHelper"}.${category.key};`";
 
       className += upperFirst(category.key);
 
@@ -80,6 +83,8 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
         nameForGet += " + ${elemento.concateneKeys[i]}";
       }
 
+      String variableType = "var";
+
       String firstUpper = upperFirst(elemento.key);
       String type;
       String defaultValue;
@@ -87,6 +92,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       if(elemento.type is String) { // Se l'elemento ha un tipo personalizzato
         type = "\"${elemento.type}\"";
         elemento.defaultValue != null ? defaultValue = elemento.defaultValue : defaultValue = "null";
+        variableType = "type";
       }else {
         type = elemento.type.toString();
         defaultValue = elemento.defaultValue?.toString();
@@ -96,6 +102,24 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
           case "StorageHelperType.DateTime":
             if(defaultValue != null && defaultValue != "null") defaultValue = "\"\"\"$defaultValue\"\"\"";
           break;
+        }
+
+        switch(type) {
+          case "StorageHelperType.String":
+            variableType = "String";
+            break;
+          case "StorageHelperType.DateTime":
+            variableType = "DateTime";
+            break;
+          case "StorageHelperType.int":
+            variableType = "int";
+            break;
+          case "StorageHelperType.double":
+            variableType = "double";
+            break;
+          case "StorageHelperType.bool":
+            variableType = "bool";
+            break;
         }
       }
 
@@ -108,13 +132,13 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       getSet += "\n\n    // Getter and setter for the key ${elemento.key}";
       if(elemento.onInit) {
         if((elemento.description?.length ?? 0) > 0) for(String desc in elemento.description) attributes += "\n    /// $desc";
-        attributes += "\n    dynamic ${elemento.key} = $defaultValue;  // Attribute to take the key value without making an asynchronous call";
+        attributes += "\n    $variableType ${elemento.key} = $defaultValue;  // Attribute to take the key value without making an asynchronous call";
         init += "\n        ${elemento.key} = await get$firstUpper();  // Initially put the value inside the attribute";
       }else {
-        getSet += "\n\n    /// Return key's value ${elemento.key}\n    /// await $objName.${elemento.key} return value \n    Future<dynamic> get ${elemento.key} async => $getCode";
+        getSet += "\n\n    /// Return key's value ${elemento.key}\n    /// await $objName.${elemento.key} return value \n    Future<$variableType> get ${elemento.key} async => $getCode";
       }
-      getSet += "\n\n    /// Return key's value ${elemento.key}\n    /// await $objName.get$firstUpper() return value \n    Future<dynamic> get$firstUpper() async => $getCode";
-      getSet += """\n\n    /// Insert a value into key \"${elemento.key}\"\n    Future<void> set$firstUpper(dynamic val) async {
+      getSet += "\n\n    /// Return key's value ${elemento.key}\n    /// await $objName.get$firstUpper() return value \n    Future<$variableType> get$firstUpper() async => $getCode";
+      getSet += """\n\n    /// Insert a value into key \"${elemento.key}\"\n    Future<void> set$firstUpper($variableType val) async {
       $setCode
     }""";
       getSet += """\n\n    /// Delete key \"${elemento.key}\"\n    /// await storageHelper.delete$firstUpper() delete element\n    Future<void> delete$firstUpper() async {
@@ -163,8 +187,27 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       Element element, ConstantReader annotation, BuildStep buildStep) {
     log("start...");
 
-    String code = """/// Author: Gabriele Princiotta
-    
+    String code = """// **************************************************************************
+// StorageHelperGenerator
+// **************************************************************************
+
+/// Author: Gabriele Princiotta
+/// This file was automatically generated by StorageHelperGenerator
+/// How to use:
+/// - import storage_helper.dart into file where you want to use it
+/// - create a variable of type StorageHelper and pass model to constructor
+/// `StorageHelper storageHelper = new StorageHelper(storageModel)`
+/// - access to subcategories:
+///   - to access a subcategory call the attribute inside the parent category or create a variable of type StorageHelper\$key in camelCase where \$key is the key of category{{sub-categories-example}}
+/// - the same thing can be done with all categories, only the class name changes
+/// - each element can be accessed using dart's getter or using the get method in camelCase
+/// `String variable = await storageHelper.variable;`
+/// `String variable2 = await storageHelper.getVariable();`
+/// - to edit element's content call the set method in camelCase
+/// `await storageHelper.setVariable("ciao");`
+/// - to delete element's content call the delete method in camelCase
+/// `await storageHelper.deleteVariable();`
+
 part of 'storage_helper.dart';
 """;
 
@@ -213,6 +256,8 @@ part of 'storage_helper.dart';
       code = code.replaceAll(from1, replace1);
       code = code.replaceAll(from2, replace2);
     }
+
+    code = code.replaceAll("{{sub-categories-example}}", subCategoriesExample);
 
     log("end!");
 
