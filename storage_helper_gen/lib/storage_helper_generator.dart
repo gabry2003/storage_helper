@@ -90,21 +90,22 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       String getCode = "await get($type, $nameForGet, $defaultValue);";
       String setCode = "await set($type, $nameForGet, val);";
 
-      if((elemento.description?.length ?? 0) > 0) for(String desc in elemento.description) statics += "\n    // $desc";
+      if((elemento.description?.length ?? 0) > 0) for(String desc in elemento.description) statics += "\n    /// $desc";
       statics += "\n    static const String $staticName = \"${elemento.key}\";";
 
-      getSet += "\n    // Getter and setter for the key ${elemento.key}";
+      getSet += "\n\n    // Getter and setter for the key ${elemento.key}";
       if(elemento.onInit) {
-        attributes = "\n    dynamic ${elemento.key} = $defaultValue;  // Attribute to take the key value without making an asynchronous call";
-        init += "\n        ${elemento.key} = await get$firstUpper();  // I initially put the value inside the attribute";
+        if((elemento.description?.length ?? 0) > 0) for(String desc in elemento.description) attributes += "\n    /// $desc";
+        attributes += "\n    dynamic ${elemento.key} = $defaultValue;  // Attribute to take the key value without making an asynchronous call";
+        init += "\n        ${elemento.key} = await get$firstUpper();  // Initially put the value inside the attribute";
       }else {
-        getSet += "\n    /// Return key's value ${elemento.key}\n    /// await storageHelper.${elemento.key} return value \n    Future<dynamic> get ${elemento.key} async => $getCode";
+        getSet += "\n\n    /// Return key's value ${elemento.key}\n    /// await storageHelper.${elemento.key} return value \n    Future<dynamic> get ${elemento.key} async => $getCode";
       }
-      getSet += "\n    /// Return key's value ${elemento.key}\n    /// await storageHelper.get$firstUpper() return value \n    Future<dynamic> get$firstUpper() async => $getCode";
-      getSet += """\n    /// Insert a value into key \"${elemento.key}\"\n    Future<void> set$firstUpper(dynamic val) async {
+      getSet += "\n\n    /// Return key's value ${elemento.key}\n    /// await storageHelper.get$firstUpper() return value \n    Future<dynamic> get$firstUpper() async => $getCode";
+      getSet += """\n\n    /// Insert a value into key \"${elemento.key}\"\n    Future<void> set$firstUpper(dynamic val) async {
       $setCode
     }""";
-      getSet += """\n    /// Delete key \"${elemento.key}\"\n    /// await storageHelper.delete$firstUpper() delete element\n    Future<void> delete$firstUpper() async {
+      getSet += """\n\n    /// Delete key \"${elemento.key}\"\n    /// await storageHelper.delete$firstUpper() delete element\n    Future<void> delete$firstUpper() async {
       await set$firstUpper(null);
     }""";
     }
@@ -118,7 +119,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
 
     code += attributes;
 
-    code += """
+    code += """\n
     /// Model from storage_helper.dart
     StorageHelperModel model;
     
