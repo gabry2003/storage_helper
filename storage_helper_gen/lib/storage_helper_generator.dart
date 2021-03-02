@@ -3,116 +3,67 @@ import 'package:analyzer/dart/constant/value.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:storage_helper_gen/storage_helper_builder.dart';
+import 'package:storage_helper_gen/storage_helper_category.dart';
+import 'package:storage_helper_gen/storage_helper_category_child.dart';
 import 'package:storage_helper_gen/storage_helper_custom_type.dart';
 import 'package:storage_helper_gen/storage_helper_element.dart';
+import 'package:storage_helper_gen/storage_helper_gen_converter.dart';
 import 'package:storage_helper_gen/storage_helper_model.dart';
-import 'package:storage_helper_gen/storage_helper_type.dart';
 
 class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder> {
+  StorageHelperGenConverter converter = new StorageHelperGenConverter();
+  /// Tipi personalizzati
+  Map<String, StorageHelperCustomType> customTypes;
+  /// Sotto categorie
+  List<StorageHelperCategoryChild> categoriesAttributes;
+  /// Numero di categorie senza chiave
+  int countAnonymous = 0;
+
   void log(String msg) {
     print(DateTime.now().toString());
     print("[STORAGE_HELPER_GENERATOR] $msg");
   }
 
-  String getStringValue(DartObject obj, String name) => obj.getField(name).toStringValue();
-  bool getBoolValue(DartObject obj, String name) => obj.getField(name).toBoolValue() ?? false;
-  int getIntValue(DartObject obj, String name) => obj.getField(name).toIntValue();
-  double getDoubleValue(DartObject obj, String name) => obj.getField(name).toDoubleValue();
-  List<DartObject> getListValue(DartObject obj, String name) => obj.getField(name).toListValue();
-  Map<DartObject,DartObject> getMapValue(DartObject obj, String name) => obj.getField(name).toMapValue();
-  ExecutableElement getFunctionValue(DartObject obj, String name) => obj.getField(name).toFunctionValue();
+  StorageHelperModel getModel(DartObject obj) => converter.convert<StorageHelperModel>(obj);
 
-  T convert<T>(DartObject obj) {
-    try {
-      switch(T) {
-        case String:
-          return obj.toStringValue() as T;
-        case bool:
-          return (obj.toBoolValue() ?? false) as T;
-        case int:
-          return obj.toIntValue() as T;
-        case double:
-          return obj.toDoubleValue() as T;
-        case StorageHelperCustomType:
-          return StorageHelperCustomType() as T;
-        case StorageHelperElement:
-          dynamic type;
-          String typeToString = obj.getField("type").toString();
+  String upperFirst(String text) => "${text[0].toUpperCase()}${text.substring(1)}";
+  String constantName(String text) => text.replaceAllMapped(RegExp(r'(?<=[a-z])[A-Z]'), (Match m) => ('_' + m.group(0))).toUpperCase();
 
-          if(typeToString.contains("StorageHelperType")) {  // Se è un tipo di StorageHelper
-            // Estraggo l'indice dell'enum dal toString e accedo al valore dall'enum da qui
-            type = StorageHelperType.values[int.tryParse(typeToString.split("index = ")[1].replaceAll("int (", "").replaceAll(")", ""))];
-          }else {
-            type = getStringValue(obj, "type");
-          }
+  String createClass(int index, StorageHelperCategory category) {
+    String className = "StorageHelper";
+    if(category.key != null) {  // Se è presente la chiave della categoria
+      className += upperFirst(category.key);
 
-          return StorageHelperElement(
-            key: getStringValue(obj, "key"),
-            type: type,
-            onInit: getBoolValue(obj, "onInit"),
-            description: getStringValue(obj, "description"),
-            defaultValue: getStringValue(obj, "defaultValue"),
-          ) as T;
-        default:
-          return null;
+      if(category.parent != null) { // Se è una categoria figlia di un'altra e quindi l'indice del genitore è specificato
+        String attributesCode = "\n    // Use this attribute to access to sub-category ${category.key}";
+        if(category.description != null) attributesCode += "\n    // ${category.description}";
+        attributesCode += "\n    $className ${category.key} = new $className(model: model);";
+
+        categoriesAttributes.add(StorageHelperCategoryChild(
+            parent: category.parent,
+            child: index,
+            code: attributesCode
+        ));
       }
-    } catch(e) {
-      return null;
-    }
-  }
+    }else {
+      if(countAnonymous > 0) throw new Exception("Insert a key for the category");
 
-  List<T> getList<T>(List<DartObject> listObject) => listObject.map(
-          (DartObject obj) => convert<T>(obj)
-  ).toList();
-
-  Map<K, V> getMap<K, V>(Map<DartObject, DartObject> mapObject) {
-    Map<K, V> map = {};
-
-    List<DartObject> origKeys = mapObject.keys.toList();
-    List<K> keys = getList<K>(origKeys);
-
-    for(int i = 0;i < keys.length;i++) {  // Per ogni chiave
-      map[keys[i]] = convert<V>(mapObject[origKeys[i]]);  // Converto la chiave e converto il valore
+      countAnonymous++;
     }
 
-    return map;
-  }
+    List<StorageHelperElement> elementi = category.elements;
 
-  StorageHelperModel getModel(DartObject obj) => new StorageHelperModel(
-    customTypes: getMap<String, StorageHelperCustomType>(getMapValue(obj, "customTypes")),
-    elements: getList<StorageHelperElement>(getListValue(obj, "elements")),
-    log: getBoolValue(obj, "log"),
-    dateFormat: getStringValue(obj, "dateFormat")
-  );
-
-  @override
-  generateForAnnotatedElement(
-      Element element, ConstantReader annotation, BuildStep buildStep) {
-    log("start...");
-
-    String code = """/// Author: Gabriele Princiotta
-/// File Helper generato automaticamente che permette di leggere, inserire, eliminare dati utilizzando FlutterSecureStorage in modo facile e con più tipi di variabili
-/// Adesso non sei più limitato alle stringhe!
-    
-part of 'storage_helper.dart';
-
-class StorageHelper extends StorageHelperBase {""";
+    String code = """class $className extends StorageHelperBase {""";
     String getSet = "\n";
     String statics = "";
-    String attributes = "";
-    String init = "\n    /// Puoi chiamare questo metodo per inizializzare gli elementi accessibili anche senza metodi asincroni\n    Future<void> init() async {";
-
-    StorageHelperModel model = getModel(annotation.read('model').objectValue);
-
-    log("Model:");
-    print(model.toMap);
-
-    List<StorageHelperElement> elementi = model.elements;
-    Map<String, StorageHelperCustomType> customTypes = model.customTypes;
+    String attributes = "{{sottoCategorie${index.toString()}}";
+    String init = "\n    /// You can call this method to initialize accessible elements even without asynchronous methods\n    Future<void> init() async {";
 
     for(StorageHelperElement elemento in elementi) {
-      String staticName = elemento.key.replaceAllMapped(RegExp(r'(?<=[a-z])[A-Z]'), (Match m) => ('_' + m.group(0))).toUpperCase();
-      String firstUpper = "${elemento.key[0].toUpperCase()}${elemento.key.substring(1)}";
+      if((elemento.key ?? "") == "") throw new Exception("Chiave dell'elemento non valida!");
+
+      String staticName = constantName(elemento.key);
+      String firstUpper = upperFirst(elemento.key);
       String type;
       String defaultValue;
 
@@ -121,7 +72,7 @@ class StorageHelper extends StorageHelperBase {""";
         try {
           if(customTypes[elemento.key].convert == null) throw new Exception();
         } catch(e) {
-          log("Elemento \"${elemento.key}\" non convertibile, salto!");
+          log("Non-convertible item \"${elemento.key}\", skip!");
           continue;
         }
 
@@ -140,25 +91,25 @@ class StorageHelper extends StorageHelperBase {""";
       if((elemento.description ?? "") != "") statics += "\n    /// ${elemento.description}";
       statics += "\n    static const String $staticName = \"${elemento.key}\";";
 
-      getSet += "\n    // Getter e setter per la chiave ${elemento.key}";
+      getSet += "\n    // Getter and setter for the key ${elemento.key}";
       if(elemento.onInit) {
-        attributes = "\n    dynamic ${elemento.key} = $defaultValue;  // Attributo per prendere il valore della chiave senza fare una chiamata asincrona";
-        init += "\n    ${elemento.key} = await get$firstUpper();  // Inserisco inizialmente il valore dentro l'attributo";
+        attributes = "\n    dynamic ${elemento.key} = $defaultValue;  // Attribute to take the key value without making an asynchronous call";
+        init += "\n    ${elemento.key} = await get$firstUpper();  // I initially put the value inside the attribute";
       }else {
-        getSet += "\n    /// Ritorna il valore della chiave ${elemento.key}\n    Future<dynamic> get ${elemento.key} async => $getCode";
+        getSet += "\n    /// Return key's value ${elemento.key}\n    /// await storageHelper.${elemento.key} return value \n    Future<dynamic> get ${elemento.key} async => $getCode";
       }
-      getSet += "\n    /// Ritorna il valore della chiave ${elemento.key}\n    Future<dynamic> get$firstUpper() async => $getCode";
-      getSet += """\n    /// Setta un valore alla chiave \"${elemento.key}\"\n    Future<void> set$firstUpper(dynamic val) async {
+      getSet += "\n    /// Return key's value ${elemento.key}\n    /// await storageHelper.get$firstUpper() return value \n    Future<dynamic> get$firstUpper() async => $getCode";
+      getSet += """\n    /// Insert a value into key \"${elemento.key}\"\n    Future<void> set$firstUpper(dynamic val) async {
       $setCode
 }""";
-      getSet += """\n    /// Elimina la chiave \"${elemento.key}\"\n    Future<void> delete$firstUpper() async {
+      getSet += """\n    /// Delete key \"${elemento.key}\"\n    /// await storageHelper.delete$firstUpper() delete element    Future<void> delete$firstUpper() async {
       await set$firstUpper(null);
 }""";
     }
 
     init += "\n    }";
 
-    code += "\n    // Attributi statici con i nomi delle chiavi così da poterci accedere anche dall'esterno";
+    code += "\n    // Static attributes with the names of the keys so that they can also be accessed from the outside";
     code += statics;
 
     code += "\n \n";
@@ -166,20 +117,17 @@ class StorageHelper extends StorageHelperBase {""";
     code += attributes;
 
     code += """
-    /// Modello
-    final StorageHelperModel model;
-    /// Se effettuare il log con le operazioni di lettura e scrittura
-    final bool doLog;
+    /// Model from storage_helper.dart
+    StorageHelperModel model;
     
-    StorageHelper({@required this.model, this.doLog=true}) : super(
-        model: model,
-        doLog: doLog
+    StorageHelper({@required this.model}) : super(
+        model: model
     );""";
 
     code += getSet;
 
     code += """
-    /// Elimina tutti gli elementi da FlutterSecureStorage
+    /// Delete all elements
     Future<void> deleteAll() async {
         log("Elimino tutto...");
         await storage.deleteAll();
@@ -191,7 +139,44 @@ class StorageHelper extends StorageHelperBase {""";
     code += """
 }""";
 
-    print("[StorageHelperGenerator] end!");
+    return code;
+  }
+
+  @override
+  generateForAnnotatedElement(
+      Element element, ConstantReader annotation, BuildStep buildStep) {
+    log("start...");
+
+    String code = """/// Author: Gabriele Princiotta
+    
+part of 'storage_helper.dart';
+""";
+
+    StorageHelperModel model = getModel(annotation.read('model').objectValue);
+
+    log("Model:");
+    print(model.toMap);
+
+    for(int i = 0;i < model.categories.length;i++) { // Per ogni categoria aggiungo la classe
+      StorageHelperCategory category = model.categories[i];
+      code += "\n${createClass(i, category)}";
+    }
+
+    // Per ogni categoria inserisco gli attributi per le sottocategorie
+    for(int i = 0;i < model.categories.length;i++) {
+      String replace = "";
+      String from = "{{sottoCategorie${i.toString()}}";
+
+      try {
+        replace = categoriesAttributes.where(
+                (StorageHelperCategoryChild child) => child.parent == i
+        ).toList()[0].code;
+      } catch(e) {}
+
+      code = code.replaceAll(from, replace);
+    }
+
+    log("end!");
 
     return code;
   }

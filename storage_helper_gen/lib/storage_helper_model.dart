@@ -1,19 +1,19 @@
+import 'package:storage_helper_gen/storage_helper_category.dart';
 import 'package:storage_helper_gen/storage_helper_custom_type.dart';
-import 'package:storage_helper_gen/storage_helper_element.dart';
 
 class StorageHelperModel {
-  final List<StorageHelperElement> elements;
+  final List<StorageHelperCategory> categories;
   final Map<String, StorageHelperCustomType> customTypes;
   final bool log;
   final String dateFormat;
 
-  const StorageHelperModel({this.elements, this.customTypes, this.log=true, this.dateFormat="yyyy-MM-dd"});
+  const StorageHelperModel({this.categories, this.customTypes, this.log=true, this.dateFormat="yyyy-MM-dd"});
 
   StorageHelperCustomType getType(String key) => customTypes[key];
 
   Map<String, dynamic> get toMap => {
-    "elements": elements.map(
-        (StorageHelperElement element) => element.toMap
+    "categories": categories.map(
+        (StorageHelperCategory category) => category.toMap
     ).toList(),
     "customTypes": customTypes,
     "log": log,
