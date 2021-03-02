@@ -1,4 +1,4 @@
-import 'package:storage_helper_gen/storage_helper.model.dart';
+import 'package:storage_helper_gen/storage_helper_model.dart';
 import 'package:storage_helper_gen/storage_helper_type.dart';
 
 import 'package:intl/intl.dart';

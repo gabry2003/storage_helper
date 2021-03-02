@@ -1,9 +1,7 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/constant/value.dart';
 import 'package:storage_helper_gen/storage_helper_category.dart';
-import 'package:storage_helper_gen/storage_helper_custom_type.dart';
 import 'package:storage_helper_gen/storage_helper_element.dart';
-import 'package:storage_helper_gen/storage_helper_model.dart';
 import 'package:storage_helper_gen/storage_helper_type.dart';
 
 class StorageHelperGenConverter {
