@@ -2,7 +2,7 @@ import 'package:storage_helper_gen/storage_helper_element.dart';
 
 class StorageHelperCategory {
   /// Categoria padre
-  final int parent;
+  final String parent;
   /// Chiave identificativa della categoria
   /// Può essere non inserita solamente in una categoria e in quel caso la classe generata sarà quella principale
   final String key;

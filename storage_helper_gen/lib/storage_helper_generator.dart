@@ -34,17 +34,14 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
     if(category.key != null) {  // Se è presente la chiave della categoria
       className += upperFirst(category.key);
 
-      if(category.parent != null) { // Se è una categoria figlia di un'altra e quindi l'indice del genitore è specificato
-        String attributesCode = "\n    // Use this attribute to access to sub-category ${category.key}";
-        if((category.description?.length ?? 0) > 0) for(String desc in category.description) attributesCode += "\n    // $desc";
-        attributesCode += "\n    $className ${category.key} = new $className(model: model);";
+      String attributesCode = "\n    // Use this attribute to access to sub-category ${category.key}";
+      if((category.description?.length ?? 0) > 0) for(String desc in category.description) attributesCode += "\n    // $desc";
+      attributesCode += "\n    $className ${category.key} = new $className(model: model);";
 
-        categoriesAttributes.add(StorageHelperCategoryChild(
-            parent: category.parent,
-            child: index,
-            code: attributesCode
-        ));
-      }
+      categoriesAttributes.add(StorageHelperCategoryChild(
+          parent: category.parent,
+          code: attributesCode
+      ));
     }else {
       if(countAnonymous > 0) throw new Exception("Insert a key for the category");
 
@@ -169,7 +166,7 @@ part of 'storage_helper.dart';
 
       try {
         replace = categoriesAttributes.where(
-                (StorageHelperCategoryChild child) => child.parent == i
+                (StorageHelperCategoryChild child) => child.parent == model.categories[i].key
         ).toList()[0].code;
       } catch(e) {}
 

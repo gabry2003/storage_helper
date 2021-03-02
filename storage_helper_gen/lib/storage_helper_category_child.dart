@@ -1,10 +1,8 @@
 class StorageHelperCategoryChild {
-  /// Indice del genitore
-  final int parent;
-  /// Indice del figlio
-  final int child;
+  /// Chiave del genitore
+  final String parent;
   /// Codice da inserire
   final String code;
 
-  const StorageHelperCategoryChild({this.parent, this.child, this.code});
+  const StorageHelperCategoryChild({this.parent, this.code});
 }
