@@ -52,7 +52,13 @@ class StorageHelperGenConverter {
 
           if(typeToString.contains("StorageHelperType")) {  // Se è un tipo di StorageHelper
             // Estraggo l'indice dell'enum dal toString e accedo al valore dall'enum da qui
-            type = StorageHelperType.values[int.tryParse(typeToString.split("index = ")[1].replaceAll("int (", "").replaceAll(")", ""))];
+            try {
+              List<String> split = typeToString.split("index = ");
+              String index = split[1].replaceAll("int (", "").replaceAll(")", "");
+              type = StorageHelperType.values[int.tryParse(index)];
+            } catch(e) {
+              throw new Exception("Impossibile prendere il tipo dell'elemento!");
+            }
 
             try {
               if(defaultValueToString.contains("bool")) { // Se è un booleano
