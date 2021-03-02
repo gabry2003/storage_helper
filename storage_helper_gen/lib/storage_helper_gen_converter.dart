@@ -53,24 +53,26 @@ class StorageHelperGenConverter {
           if(typeToString.contains("StorageHelperType")) {  // Se è un tipo di StorageHelper
             // Estraggo l'indice dell'enum dal toString e accedo al valore dall'enum da qui
             type = StorageHelperType.values[int.tryParse(typeToString.split("index = ")[1].replaceAll("int (", "").replaceAll(")", ""))];
+
+            try {
+              if(defaultValueToString.contains("bool")) { // Se è un booleano
+                defaultValue = defaultValueToString.substring(0, defaultValueToString.length - 1).replaceAll("bool (", "") == "true";
+              }else if(defaultValueToString.contains("int")) {  // Se è un intero
+                defaultValue = int.tryParse(defaultValueToString.substring(0, defaultValueToString.length - 1).replaceAll("int (", ""));
+              }else if(defaultValueToString.contains("double")) {  // Se è un double
+                defaultValue = double.tryParse(defaultValueToString.substring(0, defaultValueToString.length - 1).replaceAll("int (", ""));
+              }else if(defaultValueToString.contains("DateTime")) {  // Se è un DateTime
+                defaultValue = DateTime.parse(defaultValueToString.substring(0, defaultValueToString.length - 1).replaceAll("DateTime (", ""));
+              }else if(defaultValueToString.contains("String")) {  // Se è un String
+                defaultValue = defaultValueToString.substring(0, defaultValueToString.length - 1).replaceAll("String (", "");
+              }
+            } catch(e) {
+              log("Impossibile prendere il valore di defaullt dell'elemento \"$key\"");
+            }
           }else {
             type = getStringValue(obj, "type");
-          }
 
-          try {
-            if(defaultValueToString.contains("bool")) { // Se è un booleano
-              defaultValue = defaultValueToString.substring(0, defaultValueToString.length - 1).replaceAll("bool (", "") == "true";
-            }else if(defaultValueToString.contains("int")) {  // Se è un intero
-              defaultValue = int.tryParse(defaultValueToString.substring(0, defaultValueToString.length - 1).replaceAll("int (", ""));
-            }else if(defaultValueToString.contains("double")) {  // Se è un double
-              defaultValue = double.tryParse(defaultValueToString.substring(0, defaultValueToString.length - 1).replaceAll("int (", ""));
-            }else if(defaultValueToString.contains("DateTime")) {  // Se è un DateTime
-              defaultValue = DateTime.parse(defaultValueToString.substring(0, defaultValueToString.length - 1).replaceAll("DateTime (", ""));
-            }else if(defaultValueToString.contains("String")) {  // Se è un String
-              defaultValue = defaultValueToString.substring(0, defaultValueToString.length - 1).replaceAll("String (", "");
-            }
-          } catch(e) {
-            log("Impossibile prendere il valore di defaullt dell'elemento \"$key\"");
+            defaultValue = getStringValue(obj, "defaultValue");
           }
 
           return StorageHelperElement(
@@ -85,7 +87,9 @@ class StorageHelperGenConverter {
         default:
           return null;
       }
-    } catch(e) {
+    } catch(e, stacktrace) {
+      print(e);
+      print(stacktrace);
       return null;
     }
   }

@@ -30,6 +30,10 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
   String upperFirst(String text) => "${text[0].toUpperCase()}${text.substring(1)}";
   String constantName(String text) => text.replaceAllMapped(RegExp(r'(?<=[a-z])[A-Z]'), (Match m) => ('_' + m.group(0))).toUpperCase();
 
+  bool validKey(String key) {
+    return (key ?? "") != "";
+  }
+
   String createClass(int index, StorageHelperCategory category) {
     String className = "StorageHelper";
     if(category.key != null) {  // Se è presente la chiave della categoria
@@ -60,7 +64,8 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
     String init = "\n    /// You can call this method to initialize accessible elements even without asynchronous methods\n    Future<void> init() async {";
 
     for(StorageHelperElement elemento in elementi) {
-      if((elemento.key ?? "") == "") throw new Exception("Chiave dell'elemento non valida!");
+      if(elemento == null) throw new Exception("Elements cannot be null!");
+      if(!validKey(elemento.key)) throw new Exception("Not valid key!");
 
       String staticName = elemento.staticKey ?? constantName(elemento.key);
       String nameForGet = staticName;
@@ -74,12 +79,12 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
 
       if(elemento.type is String) { // Se l'elemento ha un tipo personalizzato
         type = "\"${elemento.type}\"";
+        elemento.defaultValue != null ? defaultValue = elemento.defaultValue : defaultValue = "null";
       }else {
         type = elemento.type.toString();
         defaultValue = elemento.defaultValue.toString();
+        (defaultValue != null && defaultValue != "null") ? defaultValue = "\"$defaultValue\"" : null;
       }
-
-      if(defaultValue != null && defaultValue != "null") defaultValue = "\"$defaultValue\"";
 
       String getCode = "await get($type, $nameForGet, $defaultValue);";
       String setCode = "await set($type, $nameForGet, val);";
