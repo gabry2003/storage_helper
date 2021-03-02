@@ -13,7 +13,7 @@ class StorageHelperModel {
 
   Map<String, dynamic> get toMap => {
     "categories": categories.map(
-        (StorageHelperCategory category) => category.toMap
+        (StorageHelperCategory category) => category?.toMap
     ).toList(),
     "customTypes": customTypes,
     "log": log,

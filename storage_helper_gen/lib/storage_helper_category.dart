@@ -21,7 +21,7 @@ class StorageHelperCategory {
     "description": description,
     "addSource": addSource,
     "elements": elements.map(
-            (StorageHelperElement element) => element.toMap
+            (StorageHelperElement element) => element?.toMap
     )
   };
 }
