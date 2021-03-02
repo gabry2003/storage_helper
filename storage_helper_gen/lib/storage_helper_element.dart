@@ -8,8 +8,8 @@ class StorageHelperElement<T> {
   /// Se l'elemento deve essere inserito come attributo e deve essere inizializzato nel metodo init
   /// Può essere utile nel caso in cui tu voglia accedere a quell'elemento senza effettuare una chiamata asincrona, ma inizializzando tutti gli attributi in una sola chiamata
   final bool onInit;
-  /// Descrizione dell'elemento (opzionale)
-  final String description;
+  /// Descrizione dell'elemento, ogni elmeento della lista è una riga della descrizione (opzionale)
+  final List<String> description;
   /// Valore di default dell'elemento (opzionale)
   final dynamic defaultValue;
 

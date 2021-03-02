@@ -6,8 +6,8 @@ class StorageHelperCategory {
   /// Chiave identificativa della categoria
   /// Può essere non inserita solamente in una categoria e in quel caso la classe generata sarà quella principale
   final String key;
-  /// Descrizione della categoria (opzionale)
-  final String description;
+  /// Descrizione della categoria, ogni elemento è una riga della descrizione (opzionale)
+  final List<String> description;
   /// Elementi della categoria
   final List<StorageHelperElement> elements;
 

@@ -36,7 +36,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
 
       if(category.parent != null) { // Se è una categoria figlia di un'altra e quindi l'indice del genitore è specificato
         String attributesCode = "\n    // Use this attribute to access to sub-category ${category.key}";
-        if(category.description != null) attributesCode += "\n    // ${category.description}";
+        if((category.description?.length ?? 0) > 0) for(String desc in category.description) attributesCode += "\n    // $desc";
         attributesCode += "\n    $className ${category.key} = new $className(model: model);";
 
         categoriesAttributes.add(StorageHelperCategoryChild(
@@ -88,7 +88,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       String getCode = "await get($type, $staticName, $defaultValue);";
       String setCode = "await set($type, $staticName, val);";
 
-      if((elemento.description ?? "") != "") statics += "\n    /// ${elemento.description}";
+      if((elemento.description?.length ?? 0) > 0) for(String desc in elemento.description) statics += "\n    // $desc";
       statics += "\n    static const String $staticName = \"${elemento.key}\";";
 
       getSet += "\n    // Getter and setter for the key ${elemento.key}";

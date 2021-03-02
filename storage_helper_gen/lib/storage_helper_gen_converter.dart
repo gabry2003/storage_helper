@@ -38,7 +38,7 @@ class StorageHelperGenConverter {
         case StorageHelperCategory:
           return new StorageHelperCategory(
             key: getStringValue(obj, "key"),
-            description: getStringValue(obj, "description"),
+            description: getList<String>(getListValue(obj, "description")),
             elements: getList<StorageHelperElement>(getListValue(obj, "elements"))
           ) as T;
         case StorageHelperElement:
@@ -56,7 +56,7 @@ class StorageHelperGenConverter {
             key: getStringValue(obj, "key"),
             type: type,
             onInit: getBoolValue(obj, "onInit"),
-            description: getStringValue(obj, "description"),
+            description: getList<String>(getListValue(obj, "description")),
             defaultValue: getStringValue(obj, "defaultValue"),
           ) as T;
         default:
