@@ -171,7 +171,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
           "    /// ```\n"
           "    Future<$variableType> get$firstUpper() async => $getCode"
           "\n\n    /// Insert a value into key \"${elemento.key}\"\n"
-          "    Future<bool> set$firstUpper($variableType ${elemento.key}) async $setCode"
+          "    Future<bool> set$firstUpper($variableType ${elemento.key}) async => $setCode"
           "\n\n    /// Delete key \"${elemento.key}\"\n"
           "    /// ```dart\n"
           "    /// await storageHelper.delete$firstUpper():\n"
