@@ -83,8 +83,14 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
         elemento.defaultValue != null ? defaultValue = elemento.defaultValue : defaultValue = "null";
       }else {
         type = elemento.type.toString();
-        defaultValue = elemento.defaultValue.toString();
-        (type == StorageHelperType.String || type == StorageHelperType.DateTime && defaultValue != null && defaultValue != "null") ? defaultValue = "\"$defaultValue\"" : null;
+        defaultValue = elemento.defaultValue?.toString();
+
+        switch(type) {
+          case "StorageHelperType.String":
+          case "StorageHelperType.DateTime":
+            if(defaultValue != null && defaultValue != "null") defaultValue = "\"\"\"$defaultValue\"\"\"";
+          break;
+        }
       }
 
       String getCode = "await get($type, $nameForGet, $defaultValue);";
@@ -186,7 +192,7 @@ part of 'storage_helper.dart';
 
     // Decomment for print code
     // Use in test
-    print(code);
+    //print(code);
 
     return code;
   }
