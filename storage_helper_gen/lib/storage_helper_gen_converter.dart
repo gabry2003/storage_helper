@@ -71,9 +71,9 @@ class StorageHelperGenConverter {
     }
   }
 
-  List<T> getList<T>(List<DartObject> listObject) => listObject.map(
+  List<T> getList<T>(List<DartObject> listObject) => listObject?.map(
           (DartObject obj) => convert<T>(obj)
-  ).toList();
+  )?.toList();
 
   Map<K, V> getMap<K, V>(Map<DartObject, DartObject> mapObject) {
     Map<K, V> map = {};
