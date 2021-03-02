@@ -43,11 +43,21 @@ class StorageHelperGenConverter {
           ) as T;
         case StorageHelperElement:
           dynamic type;
+          dynamic defaultValue;
+
           String typeToString = obj.getField("type").toString();
+          String defaultValueToString = obj.getField("defaultValue").toString();
+
+          print("adnfkjadsnfkjsenf");
+          print(defaultValueToString);
+
+          throw new Exception();
 
           if(typeToString.contains("StorageHelperType")) {  // Se è un tipo di StorageHelper
             // Estraggo l'indice dell'enum dal toString e accedo al valore dall'enum da qui
             type = StorageHelperType.values[int.tryParse(typeToString.split("index = ")[1].replaceAll("int (", "").replaceAll(")", ""))];
+
+
           }else {
             type = getStringValue(obj, "type");
           }
@@ -59,7 +69,7 @@ class StorageHelperGenConverter {
             type: type,
             onInit: getBoolValue(obj, "onInit"),
             description: getList<String>(getListValue(obj, "description")),
-            defaultValue: getStringValue(obj, "defaultValue"),
+            defaultValue: defaultValue,
           ) as T;
         default:
           return null;
