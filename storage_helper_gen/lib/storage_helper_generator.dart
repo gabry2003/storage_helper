@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/constant/value.dart';
 import 'package:build/build.dart';
@@ -7,17 +5,14 @@ import 'package:source_gen/source_gen.dart';
 import 'package:storage_helper_gen/storage_helper_builder.dart';
 import 'package:storage_helper_gen/storage_helper_category.dart';
 import 'package:storage_helper_gen/storage_helper_category_child.dart';
-import 'package:storage_helper_gen/storage_helper_custom_type.dart';
 import 'package:storage_helper_gen/storage_helper_element.dart';
 import 'package:storage_helper_gen/storage_helper_gen_converter.dart';
 import 'package:storage_helper_gen/storage_helper_model.dart';
 
 class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder> {
   StorageHelperGenConverter converter = new StorageHelperGenConverter();
-  /// Tipi personalizzati
-  Map<String, StorageHelperCustomType> customTypes;
   /// Sotto categorie
-  List<StorageHelperCategoryChild> categoriesAttributes;
+  List<StorageHelperCategoryChild> categoriesAttributes = [];
   /// Numero di categorie senza chiave
   int countAnonymous = 0;
 
