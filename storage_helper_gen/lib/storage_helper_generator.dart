@@ -112,7 +112,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       String defaultValue;
 
       if(elemento.type is String) { // Se l'elemento ha un tipo personalizzato
-        variableType = type;
+        variableType = elemento.type;
         type = "\"${elemento.type}\"";
         elemento.defaultValue != null ? defaultValue = elemento.defaultValue : defaultValue = "null";
       }else {
@@ -177,8 +177,8 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
           "    /// ```dart\n"
           "    /// await storageHelper.delete$firstUpper():\n"
           "    /// ```\n"
-          "    Future<void> delete$firstUpper() async {"
-          "        await set$firstUpper(null);"
+          "    Future<void> delete$firstUpper() async {\n"
+          "        await set$firstUpper(null);\n"
           "    }";
     }
 
