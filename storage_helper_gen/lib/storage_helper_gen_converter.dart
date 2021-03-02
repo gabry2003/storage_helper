@@ -54,7 +54,11 @@ class StorageHelperGenConverter {
             // Estraggo l'indice dell'enum dal toString e accedo al valore dall'enum da qui
             try {
               List<String> split = typeToString.split("index = ");
+              print("SPLIT");
+              print(split);
               String index = split[1].replaceAll("int (", "").replaceAll(")", "");
+              print("INDEX");
+              print(index);
               type = StorageHelperType.values[int.tryParse(index)];
             } catch(e, stacktrace) {
               print(e);
