@@ -93,7 +93,8 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
     String getSet = "\n";
     String statics = "";
     String attributes = "{{sottoCategorie${index.toString()}}}";
-    String init = "\n    /// You can call this method to initialize accessible elements even without asynchronous methods\n    Future<void> init() async {";
+    String init = "\n    /// You can call this method to initialize accessible elements even without asynchronous methods\n"
+        "    Future<void> init() async {";
 
     for(StorageHelperElement elemento in elementi) {
       if(elemento == null) throw new Exception("Elements cannot be null!");
@@ -105,7 +106,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
         nameForGet += " + ${elemento.concateneKeys[i]}";
       }
 
-      String variableType = "var";
+      String variableType = "dynamic";
 
       String getKey = elemento.getKey ?? elemento.key;
       String firstUpper = upperFirst(getKey);
@@ -152,7 +153,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       if((elemento.description?.length ?? 0) > 0) for(String desc in elemento.description) statics += "\n    /// $desc";
       statics += "\n    static const String $staticName = \"${elemento.key}\";";
 
-      getSet += "\n\n    // Getter and setter for the key ${elemento.key}";
+      getSet += "\n\n    // Getter and setter for the key \"${elemento.key}\"";
       if(elemento.onInit) {
         if((elemento.description?.length ?? 0) > 0) for(String desc in elemento.description) attributes += "\n    /// $desc";
         attributes += "\n    $variableType $getKey = $defaultValue;  // Attribute to take the key value without making an asynchronous call";
@@ -172,7 +173,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
           "    /// ```\n"
           "    Future<$variableType> get$firstUpper() async => $getCode"
           "\n\n    /// Insert a value into key \"${elemento.key}\"\n"
-          "    /// Require variable ${elemento.key} of type ${variableType}\n"
+          "    /// Require variable ${elemento.key} of type \"${variableType}\"\n"
           "    Future<bool> set$firstUpper($variableType ${elemento.key}) async => $setCode"
           "\n\n    /// Delete key \"${elemento.key}\"\n"
           "    /// ```dart\n"
@@ -190,25 +191,19 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
 
     code += attributes;
 
-    code += """\n
-    /// Model from storage_helper.dart
-    StorageHelperModel model;
-    
-    $className(this.model) : super(model){{costruttore${index.toString()}}}""";
+    code += "\n    /// Model from storage_helper.dart\n"
+        "    StorageHelperModel model;\n\n"
+        "$className(this.model) : super(model){{costruttore${index.toString()}}}";
 
     code += getSet;
 
-    code += """
-    /// Delete all elements
-    Future<void> deleteAll() async {
-        log("Elimino tutto...");
-        await storage.deleteAll();
-    }
-""";
+    code += "\n    /// Delete all elements\n"
+        "    Future<void> deleteAll() async {\n"
+        "        log(\"Elimino tutto...\");\n"
+        "        await storage.deleteAll();\n"
+        "    }";
 
-    if(category.addSource != null) {
-      code += "\n    // Additional code\n${category.addSource}";
-    }
+    if(category.addSource != null) code += "\n    // Additional code\n${category.addSource}";
 
     code += init;
 

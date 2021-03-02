@@ -30,7 +30,7 @@ class StorageHelperConverter {
     }
   }
 
-  String reConvert<T>(dynamic val) {
+  String reConvert<T>(T val) {
     switch(T.toString()) {
       case "bool":
         return ((val as bool) ?? false) ? "1" : "0";
@@ -40,10 +40,10 @@ class StorageHelperConverter {
         return val?.toString();
         break;
       case "DateTime":
-        return new DateFormat(model.dateFormat).format(val);
+        return new DateFormat(model.dateFormat).format(val as DateTime);
         break;
       case "String":
-        return val;
+        return val as String;
         break;
       default:
         return model.getType(T.toString()).reConvert(val);
