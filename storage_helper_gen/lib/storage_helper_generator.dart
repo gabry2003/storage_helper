@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/constant/value.dart';
 import 'package:build/build.dart';
@@ -163,12 +165,11 @@ part of 'storage_helper.dart';
     StorageHelperModel model = getModel(annotation.read('model').objectValue);
 
     log("Model:");
-    print(model);
-    print(model.toMap);
+    print(new JsonEncoder.withIndent("     ").convert(model.toMap));
 
     for(int i = 0;i < model.categories.length;i++) { // Per ogni categoria aggiungo la classe
-      StorageHelperCategory category = model.categories[i];
-      code += "\n${createClass(i, category)}";
+      if(model.categories[i] == null) throw new Exception("Insert all categories!");
+      code += "\n${createClass(i, model.categories[i])}";
     }
 
     // Per ogni categoria inserisco gli attributi per le sottocategorie

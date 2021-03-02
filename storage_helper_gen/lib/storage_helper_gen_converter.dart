@@ -7,6 +7,11 @@ import 'package:storage_helper_gen/storage_helper_model.dart';
 import 'package:storage_helper_gen/storage_helper_type.dart';
 
 class StorageHelperGenConverter {
+  void log(String msg) {
+    print(DateTime.now().toString());
+    print("[STORAGE_HELPER_GENERATOR] $msg");
+  }
+
   String getStringValue(DartObject obj, String name) => obj.getField(name).toStringValue();
   bool getBoolValue(DartObject obj, String name) => obj.getField(name).toBoolValue() ?? false;
   int getIntValue(DartObject obj, String name) => obj.getField(name).toIntValue();
@@ -16,6 +21,9 @@ class StorageHelperGenConverter {
   ExecutableElement getFunctionValue(DartObject obj, String name) => obj.getField(name).toFunctionValue();
 
   T convert<T>(DartObject obj) {
+    log("Convert from:");
+    print(T);
+
     try {
       switch(T) {
         case String:
@@ -29,14 +37,14 @@ class StorageHelperGenConverter {
         case StorageHelperCustomType:
           return StorageHelperCustomType() as T;
         case StorageHelperModel:
-          return new StorageHelperModel(
+          return StorageHelperModel(
               customTypes: getMap<String, StorageHelperCustomType>(getMapValue(obj, "customTypes")),
               categories: getList<StorageHelperCategory>(getListValue(obj, "categories")),
               log: getBoolValue(obj, "log"),
               dateFormat: getStringValue(obj, "dateFormat")
           ) as T;
         case StorageHelperCategory:
-          return new StorageHelperCategory(
+          return StorageHelperCategory(
             key: getStringValue(obj, "key"),
             description: getList<String>(getListValue(obj, "description")),
             elements: getList<StorageHelperElement>(getListValue(obj, "elements")),
