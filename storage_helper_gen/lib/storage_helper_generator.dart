@@ -172,8 +172,8 @@ part of 'storage_helper.dart';
 
     // Decomment for print model
     // Use in test
-    //log("Model:");
-    //print(model.toMap);
+    // log("Model:");
+    // print(model.toMap);
 
     for(int i = 0;i < model.categories.length;i++) { // Per ogni categoria aggiungo la classe
       if(model.categories[i] == null) throw new Exception("Insert all categories!");
@@ -188,12 +188,21 @@ part of 'storage_helper.dart';
       String from2 = "{{costruttore${i.toString()}}}";
 
       try {
+        int count = 0;
+        replace2 += " {\n";
+
         for(StorageHelperCategoryChild child in categoriesAttributes.where(
                 (StorageHelperCategoryChild child) => child.parent == model.categories[i].key
         ).toList()) {
           if(child.code != null) replace1 += "\n${child.code}";
-          if(child.constructor != null) replace2 += " {\n${child.constructor}\n    }";
+          if(child.constructor != null) replace2 += child.constructor;
+
+          count++;
         }
+
+        replace2 += "\n    }";
+
+        if(count == 0) replace2 = "";
       } catch(e, stacktrace) {
         print(e);
         print(stacktrace);
@@ -209,7 +218,7 @@ part of 'storage_helper.dart';
 
     // Decomment for print code
     // Use in test
-    //print(code);
+    // print(code);
 
     return code;
   }
