@@ -50,7 +50,9 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
 
     List<StorageHelperElement> elementi = category.elements;
 
-    String code = """class $className extends StorageHelperBase {""";
+    String code = "";
+    if(category.description != "") code += "/// ${category.description}";
+    code += """class $className extends StorageHelperBase {""";
     String getSet = "\n";
     String statics = "";
     String attributes = "{{sottoCategorie${index.toString()}}";
