@@ -112,9 +112,9 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       String defaultValue;
 
       if(elemento.type is String) { // Se l'elemento ha un tipo personalizzato
+        variableType = type;
         type = "\"${elemento.type}\"";
         elemento.defaultValue != null ? defaultValue = elemento.defaultValue : defaultValue = "null";
-        variableType = type;
       }else {
         type = elemento.type.toString();
         defaultValue = elemento.defaultValue?.toString();
