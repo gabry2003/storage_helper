@@ -15,6 +15,12 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
   List<StorageHelperCategoryChild> categoriesAttributes = [];
   /// Esempi per le sotto categorie
   String subCategoriesExample = "";
+  /// Esempi per i get
+  String getExample = "";
+  /// Esempi per i set
+  String setExample = "";
+  /// Esempi per i delete
+  String deleteExample = "";
   /// Numero di categorie senza chiave
   int countAnonymous = 0;
 
@@ -46,7 +52,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
 
       className += upperFirst(category.key);
 
-      subCategoriesExample += "\n///    `$className ${category.key} = new $className(storageModel);`\n///    `$className ${category.key}2 = ${category.parent != null ? category.parent : "storageHelper"}.${category.key};`";
+      subCategoriesExample += "\n///    ```dart\n$className ${category.key} = new $className(storageModel);`\n///    `$className ${category.key}2 = ${category.parent != null ? category.parent : "storageHelper"}.${category.key};\n```";
 
       String attributesCode = "\n    // Use this attribute to access to sub-category ${category.key}";
       if((category.description?.length ?? 0) > 0) for(String desc in category.description) attributesCode += "\n    /// $desc";
@@ -62,6 +68,10 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
 
       countAnonymous++;
     }
+
+    setExample += "\n/// ```dart\nawait $objName.setVariable(\"ciao\");\n```";
+    deleteExample += "\n/// ```dart\nawait $objName.deleteVariable(); // First method\nawait $objName.setVariable(null);  //  Second method\n```";
+    getExample += "\n/// ```dart\nString variable = await $objName.variable;  // First method\nString variable2 = $objName.getVariable();  // Secondo method\nString $objName.variable; // Third method, valid only for element who is initializated on init\n```";
 
     List<StorageHelperElement> elementi = category.elements;
 
@@ -197,13 +207,9 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
 ///   - to access a subcategory call the attribute inside the parent category or create a variable of type StorageHelper\$key in camelCase where \$key is the key of category
 ///   - once you have accessed a subcategory you can use the same methods of any category{{sub-categories-example}}
 /// - the same thing can be done with all categories, only the class name changes
-/// - each element can be accessed using dart's getter or using the get method in camelCase
-/// `String variable = await storageHelper.variable;`
-/// `String variable2 = await storageHelper.getVariable();`
-/// - to edit element's content call the set method in camelCase
-/// `await storageHelper.setVariable("ciao");`
-/// - to delete element's content call the delete method in camelCase
-/// `await storageHelper.deleteVariable();`
+/// - each element can be accessed using dart's getter or using the get method in camelCase{{get-example}}
+/// - to edit element's content call the set method in camelCase{{set-example}}
+/// - to delete element's content call the delete method in camelCase{{delete-example}}
 
 part of 'storage_helper.dart';
 """;
@@ -255,6 +261,9 @@ part of 'storage_helper.dart';
     }
 
     code = code.replaceAll("{{sub-categories-example}}", subCategoriesExample);
+    code = code.replaceAll("{{get-example}}", getExample);
+    code = code.replaceAll("{{set-example}}", setExample);
+    code = code.replaceAll("{{delete-example}}", deleteExample);
 
     log("end!");
 
