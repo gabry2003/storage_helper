@@ -163,6 +163,7 @@ part of 'storage_helper.dart';
     StorageHelperModel model = getModel(annotation.read('model').objectValue);
 
     log("Model:");
+    print(annotation.read('model').objectValue);
     print(model.toMap);
 
     for(int i = 0;i < model.categories.length;i++) { // Per ogni categoria aggiungo la classe
