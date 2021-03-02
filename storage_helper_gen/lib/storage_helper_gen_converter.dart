@@ -64,8 +64,9 @@ class StorageHelperGenConverter {
         default:
           return null;
       }
-    } catch(e) {
+    } catch(e, stacktrace) {
       print(e);
+      print(stacktrace);
       return null;
     }
   }
