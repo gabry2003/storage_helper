@@ -52,7 +52,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
 
       className += upperFirst(category.key);
 
-      subCategoriesExample += "\n///    ```dart\n$className ${category.key} = new $className(storageModel);`\n///    `$className ${category.key}2 = ${category.parent != null ? category.parent : "storageHelper"}.${category.key};\n```";
+      subCategoriesExample += "\n///    ```dart\n$className ${category.key} = new $className(storageModel);`\n///    `$className ${category.key}2 = ${category.parent != null ? category.parent : "storageHelper"}.${category.key};\n///    ```";
 
       String attributesCode = "\n    // Use this attribute to access to sub-category ${category.key}";
       if((category.description?.length ?? 0) > 0) for(String desc in category.description) attributesCode += "\n    /// $desc";
@@ -69,9 +69,9 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       countAnonymous++;
     }
 
-    setExample += "\n/// ```dart\nawait $objName.setVariable(\"ciao\");\n```";
-    deleteExample += "\n/// ```dart\nawait $objName.deleteVariable(); // First method\nawait $objName.setVariable(null);  //  Second method\n```";
-    getExample += "\n/// ```dart\nString variable = await $objName.variable;  // First method\nString variable2 = $objName.getVariable();  // Secondo method\nString $objName.variable; // Third method, valid only for element who is initializated on init\n```";
+    setExample += "\n/// ```dart\nawait $objName.setVariable(\"ciao\");\n/// ```";
+    deleteExample += "\n/// ```dart\nawait $objName.deleteVariable(); // First method\n/// await $objName.setVariable(null);  //  Second method\n/// ```";
+    getExample += "\n/// ```dart\nString variable = await $objName.variable;  // First method\n/// String variable2 = $objName.getVariable();  // Secondo method\n/// String $objName.variable; // Third method, valid only for element who is initializated on init\n/// ```";
 
     List<StorageHelperElement> elementi = category.elements;
 
