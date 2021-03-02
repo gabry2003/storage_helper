@@ -103,7 +103,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       getSet += """\n    /// Insert a value into key \"${elemento.key}\"\n    Future<void> set$firstUpper(dynamic val) async {
       $setCode
 }""";
-      getSet += """\n    /// Delete key \"${elemento.key}\"\n    /// await storageHelper.delete$firstUpper() delete element    Future<void> delete$firstUpper() async {
+      getSet += """\n    /// Delete key \"${elemento.key}\"\n    /// await storageHelper.delete$firstUpper() delete element\n    Future<void> delete$firstUpper() async {
       await set$firstUpper(null);
 }""";
     }
@@ -121,9 +121,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
     /// Model from storage_helper.dart
     StorageHelperModel model;
     
-    StorageHelper({@required this.model}) : super(
-        model: model
-    );""";
+    StorageHelper(this.model) : super(model);""";
 
     code += getSet;
 

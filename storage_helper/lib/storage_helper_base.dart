@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:storage_helper/storage_helper_converter.dart';
 import 'package:storage_helper_gen/storage_helper.model.dart';
@@ -8,7 +7,7 @@ class StorageHelperBase {
   final FlutterSecureStorage storage = new FlutterSecureStorage();
   StorageHelperConverter converter;
 
-  StorageHelperBase({@required this.model}) {
+  StorageHelperBase(this.model) {
     converter = new StorageHelperConverter(model);
   }
 
@@ -56,13 +55,19 @@ class StorageHelperBase {
   }
 
   Future<dynamic> get(dynamic type, String key, [dynamic defaultValue]) async {
-    log("getting \"$key\"...");
+    try {
+      log("getting \"$key\"...");
 
-    dynamic val = await convertEl(type, key, defaultValue);
+      dynamic val = await convertEl(type, key, defaultValue);
 
-    log("\"$key\" = ");
-    log(val);
+      log("\"$key\" = ");
+      log(val);
 
-    return val;
+      return val;
+    } catch(e, stacktrace) {
+      print(e);
+      print(stacktrace);
+      return null;
+    }
   }
 }
