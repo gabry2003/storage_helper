@@ -39,12 +39,14 @@ class StorageHelperBase {
             key: key,
             value: converter.reConvert(type, val)
         );
+
+        log("\"$key\" = ");
+        log(val);
       }else {
         await storage.delete(key: key);
-      }
 
-      log("\"$key\" = ");
-      log(val);
+        log("deleting $key...");
+      }
 
       return true;
     } catch(e, stacktrace) {

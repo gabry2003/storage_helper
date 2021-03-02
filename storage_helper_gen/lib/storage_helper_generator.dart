@@ -8,6 +8,7 @@ import 'package:storage_helper_gen/storage_helper_category_child.dart';
 import 'package:storage_helper_gen/storage_helper_element.dart';
 import 'package:storage_helper_gen/storage_helper_gen_converter.dart';
 import 'package:storage_helper_gen/storage_helper_model.dart';
+import 'package:storage_helper_gen/storage_helper_type.dart';
 
 class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder> {
   StorageHelperGenConverter converter = new StorageHelperGenConverter();
@@ -56,8 +57,8 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
     List<StorageHelperElement> elementi = category.elements;
 
     String code = "";
-    if(category.description != "") code += "/// ${category.description}";
-    code += """class $className extends StorageHelperBase {""";
+    if((category.description?.length ?? 0) > 0) for(String desc in category.description) code += "\n/// $desc";
+    code += """\nclass $className extends StorageHelperBase {""";
     String getSet = "\n";
     String statics = "";
     String attributes = "{{sottoCategorie${index.toString()}}";
@@ -83,7 +84,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       }else {
         type = elemento.type.toString();
         defaultValue = elemento.defaultValue.toString();
-        (defaultValue != null && defaultValue != "null") ? defaultValue = "\"$defaultValue\"" : null;
+        (type == StorageHelperType.String || type == StorageHelperType.DateTime && defaultValue != null && defaultValue != "null") ? defaultValue = "\"$defaultValue\"" : null;
       }
 
       String getCode = "await get($type, $nameForGet, $defaultValue);";
@@ -95,17 +96,17 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       getSet += "\n    // Getter and setter for the key ${elemento.key}";
       if(elemento.onInit) {
         attributes = "\n    dynamic ${elemento.key} = $defaultValue;  // Attribute to take the key value without making an asynchronous call";
-        init += "\n    ${elemento.key} = await get$firstUpper();  // I initially put the value inside the attribute";
+        init += "\n        ${elemento.key} = await get$firstUpper();  // I initially put the value inside the attribute";
       }else {
         getSet += "\n    /// Return key's value ${elemento.key}\n    /// await storageHelper.${elemento.key} return value \n    Future<dynamic> get ${elemento.key} async => $getCode";
       }
       getSet += "\n    /// Return key's value ${elemento.key}\n    /// await storageHelper.get$firstUpper() return value \n    Future<dynamic> get$firstUpper() async => $getCode";
       getSet += """\n    /// Insert a value into key \"${elemento.key}\"\n    Future<void> set$firstUpper(dynamic val) async {
       $setCode
-}""";
+    }""";
       getSet += """\n    /// Delete key \"${elemento.key}\"\n    /// await storageHelper.delete$firstUpper() delete element\n    Future<void> delete$firstUpper() async {
       await set$firstUpper(null);
-}""";
+    }""";
     }
 
     init += "\n    }";
@@ -138,9 +139,8 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
     }
 
     code += init;
-    ///
-    code += """
-}""";
+
+    code += "\n}";
 
     return code;
   }
@@ -171,9 +171,11 @@ part of 'storage_helper.dart';
       String from = "{{sottoCategorie${i.toString()}}";
 
       try {
-        replace = categoriesAttributes.where(
+        List<StorageHelperCategoryChild> all = categoriesAttributes.where(
                 (StorageHelperCategoryChild child) => child.parent == model.categories[i].key
-        ).toList()[0].code;
+        ).toList();
+
+        for(StorageHelperCategoryChild child in all) replace += "\n${child.code}";
       } catch(e) {}
 
       code = code.replaceAll(from, replace);

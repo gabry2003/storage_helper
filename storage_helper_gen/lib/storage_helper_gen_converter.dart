@@ -21,9 +21,6 @@ class StorageHelperGenConverter {
   ExecutableElement getFunctionValue(DartObject obj, String name) => obj.getField(name).toFunctionValue();
 
   T convert<T>(DartObject obj) {
-    log("Convert from:");
-    print(T);
-
     try {
       switch(T) {
         case String:
@@ -81,6 +78,8 @@ class StorageHelperGenConverter {
               }else if(defaultValueToString.contains("String")) {  // Se è un String
                 defaultValue = defaultValueToString.substring(0, defaultValueToString.length - 1).replaceAll("String (", "");
               }
+
+              if(defaultValue == "''") defaultValue = "";
             } catch(e) {
               log("Impossibile prendere il valore di defaullt dell'elemento \"$key\"");
             }
