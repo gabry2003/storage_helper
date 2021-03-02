@@ -52,7 +52,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       categoriesAttributes.add(StorageHelperCategoryChild(
           parent: category.parent,
           code: attributesCode,
-          constructor: "\n        $className = new $className(model);"
+          constructor: "\n        ${category.key} = new $className(model);        // Initialize object"
       ));
     }else {
       if(countAnonymous > 0) throw new Exception("Insert a key for the category");
@@ -202,6 +202,9 @@ part of 'storage_helper.dart';
       code = code.replaceAll(from1, replace1);
       code = code.replaceAll(from2, replace2);
     }
+
+    // Remove empty constructor brackets
+    code = code.replaceAll("super(model) {}", "super(model);");
 
     log("end!");
 
