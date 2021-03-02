@@ -42,28 +42,39 @@ class StorageHelperGenConverter {
             addSource: getStringValue(obj, "addSource")
           ) as T;
         case StorageHelperElement:
+          String key = getStringValue(obj, "key");
+
           dynamic type;
           dynamic defaultValue;
 
           String typeToString = obj.getField("type").toString();
           String defaultValueToString = obj.getField("defaultValue").toString();
 
-          print("adnfkjadsnfkjsenf");
-          print(defaultValueToString);
-
-          throw new Exception();
-
           if(typeToString.contains("StorageHelperType")) {  // Se è un tipo di StorageHelper
             // Estraggo l'indice dell'enum dal toString e accedo al valore dall'enum da qui
             type = StorageHelperType.values[int.tryParse(typeToString.split("index = ")[1].replaceAll("int (", "").replaceAll(")", ""))];
-
-
           }else {
             type = getStringValue(obj, "type");
           }
 
+          try {
+            if(defaultValueToString.contains("bool")) { // Se è un booleano
+              defaultValue = defaultValueToString.substring(0, defaultValueToString.length - 1).replaceAll("bool (", "") == "true";
+            }else if(defaultValueToString.contains("int")) {  // Se è un intero
+              defaultValue = int.tryParse(defaultValueToString.substring(0, defaultValueToString.length - 1).replaceAll("int (", ""));
+            }else if(defaultValueToString.contains("double")) {  // Se è un double
+              defaultValue = double.tryParse(defaultValueToString.substring(0, defaultValueToString.length - 1).replaceAll("int (", ""));
+            }else if(defaultValueToString.contains("DateTime")) {  // Se è un DateTime
+              defaultValue = DateTime.parse(defaultValueToString.substring(0, defaultValueToString.length - 1).replaceAll("DateTime (", ""));
+            }else if(defaultValueToString.contains("String")) {  // Se è un String
+              defaultValue = defaultValueToString.substring(0, defaultValueToString.length - 1).replaceAll("String (", "");
+            }
+          } catch(e) {
+            log("Impossibile prendere il valore di defaullt dell'elemento \"$key\"");
+          }
+
           return StorageHelperElement(
-            key: getStringValue(obj, "key"),
+            key: key,
             staticKey: getStringValue(obj, "staticKey"),
             concateneKeys: getList<String>(getListValue(obj, "concateneKeys")),
             type: type,
@@ -74,9 +85,7 @@ class StorageHelperGenConverter {
         default:
           return null;
       }
-    } catch(e, stacktrace) {
-      print(e);
-      print(stacktrace);
+    } catch(e) {
       return null;
     }
   }
