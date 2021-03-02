@@ -52,7 +52,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
 
       className += upperFirst(category.key);
 
-      subCategoriesExample += "\n///    ```dart\n$className ${category.key} = new $className(storageModel);`\n///    `$className ${category.key}2 = ${category.parent != null ? category.parent : "storageHelper"}.${category.key};\n///    ```";
+      subCategoriesExample += "\n///    ```dart\n/// $className ${category.key} = new $className(storageModel);`\n///    `$className ${category.key}2 = ${category.parent != null ? category.parent : "storageHelper"}.${category.key};\n///    ```";
 
       String attributesCode = "\n    // Use this attribute to access to sub-category ${category.key}";
       if((category.description?.length ?? 0) > 0) for(String desc in category.description) attributesCode += "\n    /// $desc";
