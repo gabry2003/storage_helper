@@ -9,19 +9,22 @@ import 'package:storage_helper_gen/storage_helper_element.dart';
 import 'package:storage_helper_gen/storage_helper_gen_converter.dart';
 import 'package:storage_helper_gen/storage_helper_model.dart';
 
+/// StorageHelper's generator
 class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder> {
+  /// Converter from DartObject
   StorageHelperGenConverter converter = new StorageHelperGenConverter();
-  /// Sotto categorie
-  List<StorageHelperCategoryChild> categoriesAttributes = [];
-  /// Esempi per le sotto categorie
+  /// Sub-categories
+  List<StorageHelperCategoryChild> sottocategorie = [];
+  /// Sub-categories example
   String subCategoriesExample = "";
-  /// Esempi per i get
+  /// Get code example
   String getExample = "";
-  /// Esempi per i set
+  /// Set code example
   String setExample = "";
-  /// Esempi per i delete
+  /// Delete code example
   String deleteExample = "";
-  /// Numero di categorie senza chiave
+  /// Number of categories without key
+  /// Only one can be and it is the main one
   int countAnonymous = 0;
 
   void log(String msg) {
@@ -61,7 +64,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       if((category.description?.length ?? 0) > 0) for(String desc in category.description) attributesCode += "\n    /// $desc";
       attributesCode += "\n    $className ${category.key};";
 
-      categoriesAttributes.add(StorageHelperCategoryChild(
+      sottocategorie.add(StorageHelperCategoryChild(
           parent: category.parent,
           code: attributesCode,
           constructor: "\n        ${category.key} = new $className(model);        // Initialize object"
@@ -257,7 +260,7 @@ part of 'storage_helper.dart';
         int count = 0;
         replace2 += " {\n";
 
-        for(StorageHelperCategoryChild child in categoriesAttributes.where(
+        for(StorageHelperCategoryChild child in sottocategorie.where(
                 (StorageHelperCategoryChild child) => child.parent == model.categories[i].key
         ).toList()) {
           if(child.code != null) replace1 += "\n${child.code}";
