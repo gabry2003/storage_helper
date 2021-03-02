@@ -135,7 +135,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
     /// Model from storage_helper.dart
     StorageHelperModel model;
     
-    $className(this.model) : super(model) {\n{{costruttore${index.toString()}}\n}""";
+    $className(this.model) : super(model){{costruttore${index.toString()}}""";
 
     code += getSet;
 
@@ -192,7 +192,11 @@ part of 'storage_helper.dart';
                 (StorageHelperCategoryChild child) => child.parent == model.categories[i].key
         ).toList()) {
           if(child.code != null) replace1 += "\n${child.code}";
-          if(child.constructor != null) replace2 += "\n${child.constructor}";
+          if(child.constructor != null) {
+            replace2 += " {\n${child.constructor}\n    }";
+          }else {
+            replace2 += ";";
+          }
         }
       } catch(e, stacktrace) {
         print(e);
@@ -202,9 +206,6 @@ part of 'storage_helper.dart';
       code = code.replaceAll(from1, replace1);
       code = code.replaceAll(from2, replace2);
     }
-
-    // Remove empty constructor brackets
-    code = code.replaceAll("super(model) {}", "super(model);");
 
     log("end!");
 
