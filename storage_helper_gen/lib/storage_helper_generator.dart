@@ -121,7 +121,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
     /// Model from storage_helper.dart
     StorageHelperModel model;
     
-    StorageHelper(this.model) : super(model);""";
+    $className(this.model) : super(model);""";
 
     code += getSet;
 
@@ -180,6 +180,10 @@ part of 'storage_helper.dart';
     }
 
     log("end!");
+
+    // Decomment for print code
+    // Use in test
+    print(code);
 
     return code;
   }
