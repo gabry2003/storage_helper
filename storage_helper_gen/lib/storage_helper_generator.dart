@@ -69,9 +69,9 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       countAnonymous++;
     }
 
-    setExample += "\n/// ```dart\nawait $objName.setVariable(\"ciao\");\n/// ```";
-    deleteExample += "\n/// ```dart\nawait $objName.deleteVariable(); // First method\n/// await $objName.setVariable(null);  //  Second method\n/// ```";
-    getExample += "\n/// ```dart\nString variable = await $objName.variable;  // First method\n/// String variable2 = $objName.getVariable();  // Secondo method\n/// String $objName.variable; // Third method, valid only for element who is initializated on init\n/// ```";
+    setExample += "\n/// ```dart\n/// await $objName.setVariable(\"ciao\");\n/// ```";
+    deleteExample += "\n/// ```dart\n/// await $objName.deleteVariable(); // First method\n/// await $objName.setVariable(null);  //  Second method\n/// ```";
+    getExample += "\n/// ```dart\n/// String variable = await $objName.variable;  // First method\n/// String variable2 = $objName.getVariable();  // Secondo method\n/// String $objName.variable; // Third method, valid only for element who is initializated on init\n/// ```";
 
     List<StorageHelperElement> elementi = category.elements;
 
