@@ -2,20 +2,27 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:storage_helper/storage_helper_converter.dart';
 import 'package:storage_helper_gen/storage_helper_model.dart';
 
+/// Parent class of all generated helpers
 class StorageHelperBase {
-  /// Modello of StorageHelper
+  /// StorageHelper's model
   final StorageHelperModel model;
-  /// Object of FlutterSecureStorage
+  /// FlutterSecureStorage's object
   final FlutterSecureStorage storage = new FlutterSecureStorage();
+  /// StorageHelperConverter's object
   StorageHelperConverter converter;
 
+  /// Constructor, takes [model] as a parameter
+  /// It initialize [converter]
   StorageHelperBase(this.model) {
     converter = new StorageHelperConverter(model);
   }
 
-  /// Print the log on the screen if [model.log] is active
-  void log(dynamic val) {
-    if(model.log) print("[StorageHelper]"); print(val);
+  /// Print [logs] on the screen if [model.log] is active
+  void log(List<dynamic> logs) {
+    if(model.log) {
+      print("[StorageHelper]");
+      for(dynamic val in logs) print(val);
+    }
   }
 
   /// Reads a value given the [key]
@@ -57,13 +64,11 @@ class StorageHelperBase {
       if(val != null) {
         await write(key, converter.reConvert<T>(val));
 
-        log("");
-        print("\"$key\" = ");
-        print(val);
+        log(["$key = ${val.toString()}"]);
       }else {
         await delete(key);
 
-        log("deleting $key...");
+        log(["deleting $key..."]);
       }
 
       return true;
@@ -74,20 +79,20 @@ class StorageHelperBase {
     }
   }
 
-  /// Returns the value of the element with the key "[key]" and if it is null it returns [defaultValue]
+  /// Returns the value of the element with the key [key] and if it is null it returns [defaultValue]
   Future<T> get<T>(String key, [T defaultValue]) async {
     try {
-      log("getting \"$key\"...");
+      log(["getting \"$key\"..."]);
 
-      dynamic val = await convertEl<T>(key, defaultValue);
+      T val = await convertEl<T>(key, defaultValue);
 
-      log("\"$key\" = ");
-      log(val);
+      log(["$key = ${val.toString()}"]);
 
       return val;
     } catch(e, stacktrace) {
       print(e);
       print(stacktrace);
+
       return null;
     }
   }
