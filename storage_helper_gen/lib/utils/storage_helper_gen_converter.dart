@@ -77,6 +77,12 @@ class StorageHelperGenConverter {
         case StorageHelperElement:
           // If I have to return an element of type `StorageHelperElement` I create a new StorageHelperElement object and pass all the parameters to the constructor taking the attributes of the object
           String key = getStringValue(obj, "key");
+          String staticKey = getStringValue(obj, "staticKey");
+          String getKey = getStringValue(obj, "getKey");
+          List<String> concateneKeys = getList<String>(getListValue(obj, "concateneKeys"));
+          List<String> description = getList<String>(getListValue(obj, "description"));
+          bool onInit = getBoolValue(obj, "onInit");
+          bool defaultIsCode = getBoolValue(obj, "defaultIsCode");
 
           dynamic type;
           dynamic defaultValue;
@@ -118,7 +124,7 @@ class StorageHelperGenConverter {
                 defaultValue = defaultValue.substring(1); // Rimuovo il primo carattere (apice)
               }
             } catch(e) {
-              storageHelperLog("Impossibile prendere il valore di default dell'elemento \"$key\"");
+              throw new StorageHelperException("Unable to get default value of element with key \"§key\§");
             }
           }else {
             type = getStringValue(obj, "type");
@@ -126,17 +132,36 @@ class StorageHelperGenConverter {
             defaultValue = getStringValue(obj, "defaultValue");
           }
 
-          return StorageHelperElement(
-            key: key,
-            staticKey: getStringValue(obj, "staticKey"),
-            getKey: getStringValue(obj, "getKey"),
-            concateneKeys: getList<String>(getListValue(obj, "concateneKeys")),
-            type: type,
-            onInit: getBoolValue(obj, "onInit"),
-            description: getList<String>(getListValue(obj, "description")),
-            defaultValue: defaultValue,
-            defaultIsCode: getBoolValue(obj, "defaultIsCode")
-          ) as T;
+          if(type == null) throw new StorageHelperException("Unable to get type of element with key \"§key\§");
+
+          StorageHelperElement element;
+          if(type is StorageHelperType) {
+            element = StorageHelperElement<StorageHelperType>(
+                key: key,
+                staticKey: staticKey,
+                getKey: getKey,
+                concateneKeys: concateneKeys,
+                type: type,
+                onInit: onInit,
+                description: description,
+                defaultValue: defaultValue,
+                defaultIsCode: defaultIsCode
+            );
+          }else {
+            element = StorageHelperElement<String>(
+                key: key,
+                staticKey: staticKey,
+                getKey: getKey,
+                concateneKeys: concateneKeys,
+                type: type,
+                onInit: onInit,
+                description: description,
+                defaultValue: defaultValue,
+                defaultIsCode: defaultIsCode
+            );
+          }
+
+          return element as T;
         case StorageHelperModel:
           // If I have to return a model of type `StorageHelperModel` I create a new StorageHelperModel object and pass all the parameters to the constructor taking the attributes of the object
           StorageHelperModel model = StorageHelperModel(
