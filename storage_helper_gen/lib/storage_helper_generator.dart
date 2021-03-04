@@ -5,12 +5,12 @@ import 'package:storage_helper_gen/exceptions/storage_helper_duplicate_exception
 import 'package:storage_helper_gen/exceptions/storage_helper_null_exception.dart';
 import 'package:storage_helper_gen/exceptions/storage_helper_valid_key_exception.dart';
 import 'package:storage_helper_gen/storage_helper_builder.dart';
-import 'package:storage_helper_gen/src/storage_helper_category.dart';
+import 'package:storage_helper_gen/storage_helper_category.dart';
 import 'package:storage_helper_gen/storage_helper_category_child.dart';
-import 'package:storage_helper_gen/src/storage_helper_element.dart';
+import 'package:storage_helper_gen/storage_helper_element.dart';
 import 'package:storage_helper_gen/utils/storage_helper_gen_converter.dart';
 import 'package:storage_helper_gen/utils/storage_helper_log.dart';
-import 'package:storage_helper_gen/src/storage_helper_model.dart';
+import 'package:storage_helper_gen/storage_helper_model.dart';
 
 import 'exceptions/storage_helper_exception.dart';
 

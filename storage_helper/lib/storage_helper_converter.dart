@@ -1,4 +1,4 @@
-import 'package:storage_helper_gen/src/storage_helper_model.dart';
+import 'package:storage_helper_gen/storage_helper_model.dart';
 import 'package:intl/intl.dart';
 
 /// It is used to convert elements from String to that type and from that type to string

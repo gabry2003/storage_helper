@@ -1,10 +1,10 @@
 import 'package:analyzer/dart/constant/value.dart';
 import 'package:storage_helper_gen/exceptions/storage_helper_exception.dart';
-import 'package:storage_helper_gen/src/storage_helper_category.dart';
-import 'package:storage_helper_gen/src/storage_helper_element.dart';
+import 'package:storage_helper_gen/storage_helper_category.dart';
+import 'package:storage_helper_gen/storage_helper_element.dart';
 import 'package:storage_helper_gen/utils/storage_helper_log.dart';
-import 'package:storage_helper_gen/src/storage_helper_model.dart';
-import 'package:storage_helper_gen/src/storage_helper_type.dart';
+import 'package:storage_helper_gen/storage_helper_model.dart';
+import 'package:storage_helper_gen/storage_helper_type.dart';
 
 /// This is to convert from `DartObject` to the necessary types so that we can interpret the model
 class StorageHelperGenConverter {

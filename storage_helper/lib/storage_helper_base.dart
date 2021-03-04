@@ -1,6 +1,6 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:storage_helper/storage_helper_converter.dart';
-import 'package:storage_helper_gen/src/storage_helper_model.dart';
+import 'package:storage_helper_gen/storage_helper_model.dart';
 
 /// Parent class of all generated helpers
 class StorageHelperBase {

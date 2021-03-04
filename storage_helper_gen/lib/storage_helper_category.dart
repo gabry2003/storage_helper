@@ -1,4 +1,4 @@
-import 'package:storage_helper_gen/src/storage_helper_element.dart';
+import 'package:storage_helper_gen/storage_helper_element.dart';
 
 /// StorageHelper'scategory, to be inserted into the model
 /// Each category is identified by the [key]

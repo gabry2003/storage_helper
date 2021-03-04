@@ -1,5 +1,5 @@
-import 'package:storage_helper_gen/src/storage_helper_custom_type.dart';
-import 'package:storage_helper_gen/src/storage_helper_type.dart';
+import 'package:storage_helper_gen/storage_helper_custom_type.dart';
+import 'package:storage_helper_gen/storage_helper_type.dart';
 
 /// Element to be inserted into a category
 /// It is used to make StorageHelper understand the methods and the possible attribute to insert in the generated class

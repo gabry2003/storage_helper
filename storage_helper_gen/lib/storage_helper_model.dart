@@ -1,5 +1,5 @@
-import 'package:storage_helper_gen/src/storage_helper_category.dart';
-import 'package:storage_helper_gen/src/storage_helper_custom_type.dart';
+import 'package:storage_helper_gen/storage_helper_category.dart';
+import 'package:storage_helper_gen/storage_helper_custom_type.dart';
 
 /// This is fundamental to StorageHelper, this is where it all starts
 /// This is to make the generator understand how to create the classes
