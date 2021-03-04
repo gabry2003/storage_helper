@@ -1,4 +1,4 @@
-import 'package:storage_helper_gen/storage_helper_model.dart';
+import 'package:storage_helper_gen/src/storage_helper_model.dart';
 import 'package:intl/intl.dart';
 
 /// It is used to convert elements from String to that type and from that type to string
@@ -29,7 +29,7 @@ class StorageHelperConverter {
         return val as T;
         break;
       default:
-        return model.getType(T.toString())?.convert(val);
+        return model.getType(T.toString())?.convertFromString(val);
     }
   }
 
@@ -51,7 +51,7 @@ class StorageHelperConverter {
         return val as String;
         break;
       default:
-        return model.getType(T.toString()).reConvert(val);
+        return model.getType(T.toString()).convertToString(val);
     }
   }
 }

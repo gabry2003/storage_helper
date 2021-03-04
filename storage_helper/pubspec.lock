@@ -245,7 +245,7 @@ packages:
     description:
       path: storage_helper_gen
       ref: master
-      resolved-ref: bb0a25e2495e339703d23d1bb8441088035d0dc3
+      resolved-ref: "21ad3fa83b66f19cd185e44afb953db04b713f0f"
       url: "https://github.com/gabry2003/storage_helper/"
     source: git
     version: "0.0.1"
