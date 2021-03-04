@@ -1,10 +1,15 @@
+/// It is to save the code to add to add the subcategories as attributes
+/// [parentKey] indicates in which category to add the code
+/// [code] is the code to add into the class
+/// [constructorCode] is the code to add inside the constructor of the class
 class StorageHelperCategoryChild {
-  /// Chiave del genitore
-  final String parent;
-  /// Codice da inserire
+  /// Parent's key
+  final String parentKey;
+  /// Code to insert
   final String code;
-  /// Codice da inserire nel costruttore
-  final String constructor;
+  /// code to insert in the constructor
+  final String constructorCode;
 
-  const StorageHelperCategoryChild({this.parent, this.code, this.constructor});
+  /// Constructor, accepts all attributes as parameters
+  const StorageHelperCategoryChild({this.parentKey, this.code, this.constructorCode});
 }
