@@ -14,6 +14,7 @@ dependencies:
 
   storage_helper_gen:
     git:
+      url: "https://github.com/gabry2003/storage_helper"
       path: storage_helper_gen
       ref: master
 
@@ -23,6 +24,10 @@ dev_dependencies:
 
   flutter_secure_storage: ^3.3.5
   intl: ^0.15.7
+
+dependency_overrides:
+  storage_helper_gen:
+    path: ../storage_helper_gen
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
