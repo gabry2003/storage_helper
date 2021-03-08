@@ -251,7 +251,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
 
     code += "\n    /// Delete all elements\n"
         "    Future<void> deleteAll() async {\n"
-        "        log(\"Elimino tutto...\");\n"
+        "        log([\"Elimino tutto...\"]);\n"
         "        await storage.deleteAll();\n"
         "    }";
 
