@@ -42,18 +42,18 @@ class StorageHelperBase {
   );
 
   /// Converts [key] and a [defaultValue] from string to data element
-  Future<T?> convertEl<T>(String key, [T? defaultValue]) async {
+  Future<T> convertEl<T>(String key, T defaultValue) async {
     try {
       String? val = await read(key) ?? converter?.reConvert<T>(defaultValue);
 
-      if(val == null) return null;
+      if(val == null) return null as T;
 
-      return converter?.convert<T>(val);
+      return converter?.convert<T>(val) as T;
     } catch(e, stacktrace) {
       print(e);
       print(stacktrace);
 
-      return null;
+      return null as T;
     }
   }
 
@@ -80,11 +80,11 @@ class StorageHelperBase {
   }
 
   /// Returns the value of the element with the key [key] and if it is null it returns [defaultValue]
-  Future<T?> get<T>(String key, [T? defaultValue]) async {
+  Future<T> get<T>(String key, T defaultValue) async {
     try {
       log(["getting \"$key\"..."]);
 
-      T? val = await convertEl<T>(key, defaultValue);
+      T val = await convertEl<T>(key, defaultValue);
 
       log(["$key = ${val.toString()}"]);
 
@@ -93,7 +93,7 @@ class StorageHelperBase {
       print(e);
       print(stacktrace);
 
-      return null;
+      return null as T;
     }
   }
 }

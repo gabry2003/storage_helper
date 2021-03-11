@@ -12,7 +12,7 @@ class StorageHelperConverter {
 
   /// It takes [val] as a parameter, which is the string returned by FlutterSecureStorage
   /// Returns the string converted to an object of type `T`
-  T? convert<T>(String? val) {
+  T convert<T>(String? val) {
     switch(T.toString()) {
       case "bool":
       case "bool?":
@@ -36,17 +36,17 @@ class StorageHelperConverter {
 
   /// It receives [val] as a parameter, which is an object of type `T`
   /// Returns the object converted to a string
-  String? reConvert<T>(T? val) {
+  String? reConvert<T>(T val) {
     switch(T.toString()) {
       case "bool":
         return ((val as bool) ?? false) ? "1" : "0";
       case "int":
       case "double":
-        return val?.toString();
+        return val.toString();
       case "DateTime":
         return new DateFormat(model.dateFormat).format(val as DateTime);
       case "String":
-        return val as String;
+        return val as String?;
       default:
         return model.getType(T.toString())?.convertToString(val);
     }
