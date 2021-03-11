@@ -11,16 +11,16 @@ import 'package:storage_helper_gen/storage_helper_type.dart';
 class StorageHelperGenConverter {
   /// Takes the object "[obj]" as a parameter and the name of the attribute to read the value of
   /// Return the attribute as a String
-  String? getStringValue(DartObject? obj, String name) => obj?.getField(name).toStringValue();
+  String? getStringValue(DartObject? obj, String name) => obj?.getField(name)?.toStringValue();
   /// Takes the object "[obj]" as a parameter and the name of the attribute to read the value of
   /// Return the attribute as a bool
-  bool? getBoolValue(DartObject? obj, String name) => obj?.getField(name).toBoolValue() ?? false;
+  bool? getBoolValue(DartObject? obj, String name) => obj?.getField(name)?.toBoolValue() ?? false;
   /// Takes the object "[obj]" as a parameter and the name of the attribute to read the value of
   /// Return the attribute as int
-  int? getIntValue(DartObject? obj, String name) => obj?.getField(name).toIntValue();
+  int? getIntValue(DartObject? obj, String name) => obj?.getField(name)?.toIntValue();
   /// Takes the object "[obj]" as a parameter and the name of the attribute to read the value of
   /// Return the attribute as a double
-  double? getDoubleValue(DartObject? obj, String name) => obj?.getField(name).toDoubleValue();
+  double? getDoubleValue(DartObject? obj, String name) => obj?.getField(name)?.toDoubleValue();
   /// Takes the object "[obj]" as a parameter and the name of the attribute to read the value of
   /// Return the attribute as List <DartObject>
   /// Of this list obviously all the elements must be converted with the `getList` method

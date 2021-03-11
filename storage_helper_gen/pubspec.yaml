@@ -2,7 +2,7 @@ name: storage_helper_gen
 description: Generatore per StorageHelper
 version: 0.0.1
 author: Gabriele Princiotta
-homepage:
+homepage: https://github.com/gabry2003/storage_helper
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
