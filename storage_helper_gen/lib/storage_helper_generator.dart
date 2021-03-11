@@ -25,7 +25,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
   List<StorageHelperCategoryChild> sottocategorie = [];
   /// List of all categories keys
   /// It is used to check that there are no categories with the same key
-  List<String> categoriesKeys = [];
+  List<String?> categoriesKeys = [];
   /// Sub-categories example
   String subCategoriesExample = "";
   /// Get code example
@@ -302,7 +302,7 @@ part of 'storage_helper.dart';
         if(!validKey(model.categories[i].key)) new StorageHelperValidKeyException(model.categories[i].key);
         // I check that there is no category with this key
         if(categoriesKeys.contains(model.categories[i].key)) throw new StorageHelperDuplicateException("categories");
-        categoriesKeys.add(model.categories[i].key!);  // Add category's key to list
+        categoriesKeys.add(model.categories[i].key);  // Add category's key to list
         code += "\n${createClass(i, model.categories[i])}";
       }
 
