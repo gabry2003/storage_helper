@@ -115,7 +115,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       attributesCode += "\n    $className ${category.key};";
 
       sottocategorie.add(StorageHelperCategoryChild(
-          parentKey: category.parent!,
+          parentKey: category.parent as String,
           code: attributesCode,
           constructorCode: "\n        ${category.key} = new $className(model);        // Initialize object"
       ));
