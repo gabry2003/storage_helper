@@ -117,7 +117,8 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       sottocategorie.add(StorageHelperCategoryChild(
           parentKey: category.parent as String,
           code: attributesCode,
-          constructorCode: "\n        ${category.key} = new $className(model);        // Initialize object"
+          constructorCode: "\n        ${category.key} = new $className(model);        // Initialize object",
+          onInit: "\n        await ${category.key}.init();"
       ));
     }else {
       if(countAnonymous > 0) throw new StorageHelperException("There can only be one category without a key and it is the main one");
@@ -141,7 +142,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
     String statics = "";
     String attributes = "{{sottoCategorie${index.toString()}}}";
     String init = "\n    /// You can call this method to initialize accessible elements even without asynchronous methods\n"
-        "    Future<void> init() async {";
+        "    Future<void> init() async {{{onInit${index.toString()}}}";
 
     for(StorageHelperElement element in elements) {
       if(!validKey(element.key)) throw new StorageHelperValidKeyException(element.key);
@@ -314,6 +315,8 @@ part of 'storage_helper.dart';
         String from1 = "{{sottoCategorie${i.toString()}}}";
         String replace2 = "";
         String from2 = "{{costruttore${i.toString()}}}";
+        String replace3 = "";
+        String from3 = "{{onInit${i.toString()}}}";
 
         try {
           int count = 0;
@@ -324,6 +327,7 @@ part of 'storage_helper.dart';
           ).toList()) {
             if(child.code != null) replace1 += "\n${child.code}";
             if(child.constructorCode != null) replace2 += child.constructorCode as String;
+            if(child.onInit != null) replace3 += child.onInit as String;
 
             count++;
           }
