@@ -1,4 +1,5 @@
 import 'package:storage_helper_gen/storage_helper_model.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:intl/intl.dart';
 
 /// It is used to convert elements from String to that type and from that type to string
@@ -11,47 +12,43 @@ class StorageHelperConverter {
 
   /// It takes [val] as a parameter, which is the string returned by FlutterSecureStorage
   /// Returns the string converted to an object of type `T`
-  T convert<T>(String val) {
+  T? convert<T>(String? val) {
     switch(T.toString()) {
       case "bool":
+      case "bool?":
         return (val == "1") as T;
-        break;
       case "int":
-        return int.tryParse(val) as T;
-        break;
+      case "int?":
+        return int?.tryParse(val!) as T;
       case "double":
-        return double.tryParse(val) as T;
-        break;
+      case "double?":
+        return double?.tryParse(val!) as T;
       case "DateTime":
-        return (new DateFormat(model.dateFormat).parse(val)) as T;
-        break;
+      case "DateTime?":
+        return (new DateFormat(model.dateFormat).parse(val!)) as T;
       case "String":
+      case "String?":
         return val as T;
-        break;
       default:
-        return model.getType(T.toString())?.convertFromString(val);
+        return model.getType(T.toString())?.convertFromString(val) as T;
     }
   }
 
   /// It receives [val] as a parameter, which is an object of type `T`
   /// Returns the object converted to a string
-  String reConvert<T>(T val) {
+  String? reConvert<T>(T? val) {
     switch(T.toString()) {
       case "bool":
         return ((val as bool) ?? false) ? "1" : "0";
-        break;
       case "int":
       case "double":
         return val?.toString();
-        break;
       case "DateTime":
         return new DateFormat(model.dateFormat).format(val as DateTime);
-        break;
       case "String":
         return val as String;
-        break;
       default:
-        return model.getType(T.toString()).convertToString(val);
+        return model.getType(T.toString())?.convertToString(val);
     }
   }
 }

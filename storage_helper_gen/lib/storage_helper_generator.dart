@@ -1,5 +1,8 @@
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:analyzer/dart/element/element.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:build/build.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:source_gen/source_gen.dart';
 import 'package:storage_helper_gen/exceptions/storage_helper_duplicate_exception.dart';
 import 'package:storage_helper_gen/exceptions/storage_helper_null_exception.dart';
@@ -38,11 +41,11 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
   /// Returns the [text] with the first character uppercase
   String upperFirst(String text) => "${text[0].toUpperCase()}${text.substring(1)}";
   /// Returns the [text] converted from camelCase to Delimiter-separated words in UpperCase
-  String constantName(String text) => text.replaceAllMapped(RegExp(r'(?<=[a-z])[A-Z]'), (Match m) => ('_' + m.group(0))).toUpperCase();
+  String constantName(String text) => text.replaceAllMapped(RegExp(r'(?<=[a-z])[A-Z]'), (Match m) => ("_" + (m.group(0) as String))).toUpperCase();
 
   /// Return `true` if the [key] is in a valid format to be inserted into the code
   /// Otherwise it returns `false`
-  bool validKey(String key) {
+  bool validKey(String? key) {
     // The key cannot start with a number
     // Cannot contain spaces
     // Cannot contain special characters
@@ -61,14 +64,14 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
   /// If it is valid, return the [code]
   /// Otherwise throw an exception to tell the user to enter a valid default value for the key "[key]"
   // ignore: missing_return
-  String validateDefaultValue(String code, String key) {
+  String? validateDefaultValue(String? code, String key) {
     Function eccezione = () {
       throw new FormatException("Please insert a valid default value for key \"$key\"");
     };
 
     if((code ?? "") == "") eccezione();
 
-    if(code.trim()[code.length - 1] != ";") {
+    if(code?.trim()[code.length - 1] != ";") {
       return code;
     }else {
       eccezione();
@@ -102,17 +105,17 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       if(category.parent != null) objName += ".${category.parent}";
       objName += ".${category.key}";
 
-      className += upperFirst(category.key);
+      className += upperFirst(category.key!);
 
       subCategoriesExample += "$className ${category.key} = new $className(storageModel);  // First method\n"
           "$className ${category.key}2 = ${category.parent != null ? category.parent : "storageHelper"}.${category.key}; // Second method";
 
       String attributesCode = "\n    // Use this attribute to access to sub-category ${category.key}";
-      if((category.description?.length ?? 0) > 0) for(String desc in category.description) attributesCode += "\n    /// $desc";
+      if((category.description?.length ?? 0) > 0) for(String? desc in category.description!) attributesCode += "\n    /// $desc";
       attributesCode += "\n    $className ${category.key};";
 
       sottocategorie.add(StorageHelperCategoryChild(
-          parentKey: category.parent,
+          parentKey: category.parent!,
           code: attributesCode,
           constructorCode: "\n        ${category.key} = new $className(model);        // Initialize object"
       ));
@@ -129,10 +132,10 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
         "String variable2 = await $objName.getVariable();  // Secondo method\n"
         "String variable3 = $objName.variable; // Third method, valid only for element who is initializated on init";
 
-    List<StorageHelperElement> elements = category.elements;
+    List<StorageHelperElement>? elements = category.elements!;
 
     String code = "";
-    if((category.description?.length ?? 0) > 0) for(String desc in category.description) code += "\n/// $desc";
+    if((category.description?.length ?? 0) > 0) for(String? desc in category.description!) code += "\n/// $desc";
     code += """\nclass $className extends StorageHelperBase {""";
     String getSet = "\n";
     String statics = "";
@@ -141,7 +144,6 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
         "    Future<void> init() async {";
 
     for(StorageHelperElement element in elements) {
-      if(element == null) throw new StorageHelperNullException("elements");
       if(!validKey(element.key)) throw new StorageHelperValidKeyException(element.key);
 
       // I check that there is no elemnets with this key
@@ -151,7 +153,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       String staticName = element.staticKey ?? constantName(element.key);
       String nameForGet = staticName;
       for(int i = 0;i < (element.concateneKeys?.length ?? 0);i++) {
-        nameForGet += " + ${element.concateneKeys[i]}";
+        nameForGet += " + ${element.concateneKeys?[i]}";
       }
 
       String variableType = "dynamic";
@@ -159,16 +161,16 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       String getKey = element.getKey ?? element.key;
       String firstUpper = upperFirst(getKey);
       String type;
-      String defaultValue;
+      String? defaultValue;
 
       if(element.type is String) { // Se l'elemento ha un tipo personalizzato
         variableType = element.type;
         type = "\"${element.type}\"";
-        element.defaultValue != null ? defaultValue = validateDefaultValue(element.defaultValue, element.key) : defaultValue = "null";
+        element.defaultValue != null ? defaultValue = validateDefaultValue(element.defaultValue, element.key)! : defaultValue = "null";
       }else {
         type = element.type.toString();
         if(element.defaultIsCode ?? false) { // Se il valore di default è un pezzo di codice
-          element.defaultValue != null ? defaultValue = validateDefaultValue(element.defaultValue, element.key) : defaultValue = "null";
+          element.defaultValue != null ? defaultValue = validateDefaultValue(element.defaultValue, element.key)! : defaultValue = "null";
         }else {
           defaultValue = element.defaultValue?.toString();
 
@@ -181,19 +183,19 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
 
           switch(type) {
             case "StorageHelperType.String":
-              variableType = "String";
+              variableType = "String?";
               break;
             case "StorageHelperType.DateTime":
-              variableType = "DateTime";
+              variableType = "DateTime?";
               break;
             case "StorageHelperType.int":
-              variableType = "int";
+              variableType = "int?";
               break;
             case "StorageHelperType.double":
-              variableType = "double";
+              variableType = "double?";
               break;
             case "StorageHelperType.bool":
-              variableType = "bool";
+              variableType = "bool?";
               break;
           }
         }
@@ -202,12 +204,12 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       String getCode = "await get<$variableType>($nameForGet, $defaultValue);";
       String setCode = "await set<$variableType>($nameForGet, ${element.key});";
 
-      if((element.description?.length ?? 0) > 0) for(String desc in element.description) statics += "\n    /// $desc";
+      if((element.description?.length ?? 0) > 0) for(String? desc in element.description!) statics += "\n    /// $desc";
       statics += "\n    static const String $staticName = \"${element.key}\";";
 
       getSet += "\n\n    // Getter and setter for the key \"${element.key}\"";
-      if(element.onInit) {
-        if((element.description?.length ?? 0) > 0) for(String desc in element.description) attributes += "\n    /// $desc";
+      if(element.onInit ?? false) {
+        if((element.description?.length ?? 0) > 0) for(String? desc in element.description!) attributes += "\n    /// $desc";
         attributes += "\n    $variableType $getKey = $defaultValue;  // Attribute to take the key value without making an asynchronous call";
         init += "\n        ${element.key} = await get$firstUpper();  // Initially put the value inside the attribute";
       }else {
@@ -286,7 +288,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
 part of 'storage_helper.dart';
 """;
 
-    StorageHelperModel model = converter.convert<StorageHelperModel>(annotation.read('model').objectValue);
+    StorageHelperModel? model = converter.convert<StorageHelperModel>(annotation.read("model").objectValue);
 
     if(model == null) throw new StorageHelperNullException("model");
 
@@ -296,11 +298,10 @@ part of 'storage_helper.dart';
     // print(model.toMap);
 
     for(int i = 0;i < model.categories.length;i++) { // Add a class for each category
-      if(model.categories[i] == null) throw new StorageHelperNullException("category");
-      if(!validKey(model.categories[i].key)) new StorageHelperValidKeyException(model.categories[i].key);
+      if(!validKey(model.categories[i].key!)) new StorageHelperValidKeyException(model.categories[i].key);
       // I check that there is no category with this key
       if(categoriesKeys.contains(model.categories[i].key)) throw new StorageHelperDuplicateException("categories");
-      categoriesKeys.add(model.categories[i].key);  // Add category's key to list
+      categoriesKeys.add(model.categories[i].key!);  // Add category's key to list
       code += "\n${createClass(i, model.categories[i])}";
     }
 
@@ -319,7 +320,7 @@ part of 'storage_helper.dart';
                 (StorageHelperCategoryChild child) => child.parentKey == model.categories[i].key
         ).toList()) {
           if(child.code != null) replace1 += "\n${child.code}";
-          if(child.constructorCode != null) replace2 += child.constructorCode;
+          if(child.constructorCode != null) replace2 += child.constructorCode as String;
 
           count++;
         }

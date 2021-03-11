@@ -5,7 +5,7 @@ class StorageHelperDuplicateException extends StorageHelperException {
   /// Type of duplicates key
   /// Es.
   /// "elements"
-  String type;
+  late String type;
 
   StorageHelperDuplicateException(type) : super("There cannot be multiple $type with same key!");
 }

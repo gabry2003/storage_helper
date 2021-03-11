@@ -105,19 +105,19 @@ class StorageHelperModel {
   /// ```
   ///
   /// See also [StorageHelperCustomType]
-  final Map<String, StorageHelperCustomType> customTypes;
+  final Map<String, StorageHelperCustomType>? customTypes;
   /// Whether to log on the screen of the operations of writing, reading, deleting
-  final bool log;
+  final bool? log;
   /// Date format, default is yyyy-MM-dd
-  final String dateFormat;
+  final String? dateFormat;
 
   /// Constructor, accepts all attributes as parameters
-  const StorageHelperModel({this.categories, this.customTypes, this.log=true, this.dateFormat="yyyy-MM-dd"});
+  const StorageHelperModel({required this.categories, this.customTypes, this.log=true, this.dateFormat="yyyy-MM-dd"});
 
   /// Given the [key] of the custom type, it returns the custom type from the Map, if present
-  StorageHelperCustomType getType(String key) {
+  StorageHelperCustomType? getType(String key) {
     try {
-      return customTypes[key];
+      return customTypes?[key];
     } catch(e) {
       return null;
     }
@@ -127,7 +127,7 @@ class StorageHelperModel {
   /// Useful for printing the entire object in a single call
   Map<String, dynamic> get toMap => {
     "categories": categories.map(
-        (StorageHelperCategory category) => category?.toMap
+        (StorageHelperCategory category) => category.toMap
     ).toList(),
     "customTypes": customTypes,
     "log": log,

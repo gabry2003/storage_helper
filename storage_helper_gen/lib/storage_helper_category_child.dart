@@ -6,10 +6,10 @@ class StorageHelperCategoryChild {
   /// Parent's key
   final String parentKey;
   /// Code to insert
-  final String code;
+  final String? code;
   /// code to insert in the constructor
-  final String constructorCode;
+  final String? constructorCode;
 
   /// Constructor, accepts all attributes as parameters
-  const StorageHelperCategoryChild({this.parentKey, this.code, this.constructorCode});
+  const StorageHelperCategoryChild({required this.parentKey, this.code, this.constructorCode});
 }

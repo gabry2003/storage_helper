@@ -9,7 +9,7 @@ class StorageHelperBase {
   /// FlutterSecureStorage's object
   final FlutterSecureStorage storage = new FlutterSecureStorage();
   /// StorageHelperConverter's object
-  StorageHelperConverter converter;
+  StorageHelperConverter? converter;
 
   /// Constructor, takes [model] as a parameter
   /// It initialize [converter]
@@ -19,19 +19,19 @@ class StorageHelperBase {
 
   /// Print [logs] on the screen if [model.log] is active
   void log(List<dynamic> logs) {
-    if(model.log) {
+    if(model.log ?? false) {
       print("[StorageHelper]");
       for(dynamic val in logs) print(val);
     }
   }
 
   /// Reads a value given the [key]
-  Future<String> read(String key) async => await storage.read(
+  Future<String?> read(String key) async => await storage.read(
       key: key
   );
 
   /// Write [value] inside [key]
-  Future<void> write(String key, String value) async => await storage.write(
+  Future<void> write(String key, String? value) async => await storage.write(
       key: key,
       value: value
   );
@@ -42,13 +42,13 @@ class StorageHelperBase {
   );
 
   /// Converts [key] and a [defaultValue] from string to data element
-  Future<T> convertEl<T>(String key, [T defaultValue]) async {
+  Future<T?> convertEl<T>(String key, [T? defaultValue]) async {
     try {
-      String val = await read(key) ?? converter.reConvert<T>(defaultValue);
+      String? val = await read(key) ?? converter?.reConvert<T>(defaultValue);
 
       if(val == null) return null;
 
-      return converter.convert<T>(val);
+      return converter?.convert<T>(val);
     } catch(e, stacktrace) {
       print(e);
       print(stacktrace);
@@ -59,10 +59,10 @@ class StorageHelperBase {
 
   /// Insert the value [val] into the element with the key "[key]"
   /// Returns `true` if the operation was successful, otherwise returns `false`
-  Future<bool> set<T>(String key, T val) async {
+  Future<bool> set<T>(String key, T? val) async {
     try {
       if(val != null) {
-        await write(key, converter.reConvert<T>(val));
+        await write(key, converter?.reConvert<T>(val));
 
         log(["$key = ${val.toString()}"]);
       }else {
@@ -80,11 +80,11 @@ class StorageHelperBase {
   }
 
   /// Returns the value of the element with the key [key] and if it is null it returns [defaultValue]
-  Future<T> get<T>(String key, [T defaultValue]) async {
+  Future<T?> get<T>(String key, [T? defaultValue]) async {
     try {
       log(["getting \"$key\"..."]);
 
-      T val = await convertEl<T>(key, defaultValue);
+      T? val = await convertEl<T>(key, defaultValue);
 
       log(["$key = ${val.toString()}"]);
 

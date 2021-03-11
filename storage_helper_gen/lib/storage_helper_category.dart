@@ -10,18 +10,18 @@ import 'package:storage_helper_gen/storage_helper_element.dart';
 /// In a category you can add a piece of custom code, called [addSource], which will be added to the class inside the generated code
 class StorageHelperCategory {
   /// If the [parent] is not entered and is not the parent category, all categories are children of the parent category.
-  final String parent;
+  final String? parent;
   /// If the [key] is not entered, it is identified as the main category.
   /// Obviously there can only be one category without [key] because there can only be one main category.
   /// Obviously there cannot be multiple categories with the same [key].
-  final String key;
+  final String? key;
   /// Category's description, each item is a description line (optional)
-  final List<String> description;
+  final List<String?>? description;
   /// Optional code to add
-  final String addSource;
+  final String? addSource;
   /// A list of objects that describe all the keys, data types etc ... used on FlutterSecureStorage.
   /// Watch also [StorageHelperElement]
-  final List<StorageHelperElement> elements;
+  final List<StorageHelperElement>? elements;
 
   /// Constructor, accepts all attributes as parameters
   const StorageHelperCategory({this.parent, this.key, this.description, this.addSource, this.elements});
@@ -33,8 +33,8 @@ class StorageHelperCategory {
     "key": key,
     "description": description,
     "addSource": addSource,
-    "elements": elements.map(
-            (StorageHelperElement element) => element?.toMap
+    "elements": elements?.map(
+            (StorageHelperElement? element) => element?.toMap
     )
   };
 }
