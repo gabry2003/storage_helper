@@ -157,7 +157,8 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
         nameForGet += " + ${element.concateneKeys?[i]}";
       }
 
-      String variableType = "dynamic";
+      String variableTypeGet = "dynamic";
+      String variableTypeSet = "dynamic";
 
       String getKey = element.getKey ?? element.key;
       String firstUpper = upperFirst(getKey);
@@ -165,7 +166,8 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       String? defaultValue;
 
       if(element.type is String) { // Se l'elemento ha un tipo personalizzato
-        variableType = element.type;
+        variableTypeGet = element.type;
+        variableTypeSet = variableTypeGet + "?";
         type = "\"${element.type}\"";
         element.defaultValue != null ? defaultValue = validateDefaultValue(element.defaultValue, element.key)! : defaultValue = "null";
       }else {
@@ -184,28 +186,30 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
 
           switch(type) {
             case "StorageHelperType.String":
-              variableType = "String";
+              variableTypeGet = "String";
               break;
             case "StorageHelperType.DateTime":
-              variableType = "DateTime";
+              variableTypeGet = "DateTime";
               break;
             case "StorageHelperType.int":
-              variableType = "int";
+              variableTypeGet = "int";
               break;
             case "StorageHelperType.double":
-              variableType = "double";
+              variableTypeGet = "double";
               break;
             case "StorageHelperType.bool":
-              variableType = "bool";
+              variableTypeGet = "bool";
               break;
           }
 
-          if(element.defaultValue == null) variableType += "?";
+          variableTypeSet = variableTypeGet + "?";
+
+          if(element.defaultValue == null) variableTypeGet += "?";
         }
       }
 
-      String getCode = "await get<$variableType>($nameForGet, $defaultValue);";
-      String setCode = "await set<$variableType>($nameForGet, ${element.key});";
+      String getCode = "await get<$variableTypeGet>($nameForGet, $defaultValue);";
+      String setCode = "await set<$variableTypeSet>($nameForGet, ${element.key});";
 
       if((element.description?.length ?? 0) > 0) for(String? desc in element.description!) statics += "\n    /// $desc";
       statics += "\n    static const String $staticName = \"${element.key}\";";
@@ -213,25 +217,25 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       getSet += "\n\n    // Getter and setter for the key \"${element.key}\"";
       if(element.onInit ?? false) {
         if((element.description?.length ?? 0) > 0) for(String? desc in element.description!) attributes += "\n    /// $desc";
-        attributes += "\n    $variableType $getKey = $defaultValue;  // Attribute to take the key value without making an asynchronous call";
+        attributes += "\n    $variableTypeGet $getKey = $defaultValue;  // Attribute to take the key value without making an asynchronous call";
         init += "\n        ${element.key} = await get$firstUpper();  // Initially put the value inside the attribute";
       }else {
         getSet += "\n\n    /// Return value of ${element.key}\n"
-            "    /// Return a variable of type \"$variableType\"\n"
+            "    /// Return a variable of type \"$variableTypeGet\"\n"
             "    /// ```dart\n"
-            "    /// $variableType $getKey = await $objName.${element.key};\n"
+            "    /// $variableTypeGet $getKey = await $objName.${element.key};\n"
             "    /// ```\n"
-            "    Future<$variableType> get $getKey async => $getCode";
+            "    Future<$variableTypeGet> get $getKey async => $getCode";
       }
       getSet += "\n\n    /// Return value of ${element.key}\n"
-          "    /// Return a variable of type \"$variableType\"\n"
+          "    /// Return a variable of type \"$variableTypeGet\"\n"
           "    /// ```dart\n"
-          "    /// $variableType ${element.key} = await $objName.get$firstUpper();\n"
+          "    /// $variableTypeGet ${element.key} = await $objName.get$firstUpper();\n"
           "    /// ```\n"
-          "    Future<$variableType> get$firstUpper() async => $getCode"
+          "    Future<$variableTypeGet> get$firstUpper() async => $getCode"
           "\n\n    /// Insert a value into key \"${element.key}\"\n"
-          "    /// Require variable ${element.key} of type \"${variableType}\"\n"
-          "    Future<bool> set$firstUpper($variableType ${element.key}) async => $setCode"
+          "    /// Require variable ${element.key} of type \"${variableTypeGet}\"\n"
+          "    Future<bool> set$firstUpper($variableTypeGet ${element.key}) async => $setCode"
           "\n\n    /// Delete key \"${element.key}\"\n"
           "    /// ```dart\n"
           "    /// await storageHelper.delete$firstUpper();\n"
