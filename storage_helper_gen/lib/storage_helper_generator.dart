@@ -288,67 +288,74 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
 part of 'storage_helper.dart';
 """;
 
-    StorageHelperModel? model = converter.convert<StorageHelperModel>(annotation.read("model").objectValue);
+    try {
+      StorageHelperModel? model = converter.convert<StorageHelperModel>(annotation.read("model").objectValue);
 
-    if(model == null) throw new StorageHelperNullException("model");
+      if(model == null) throw new StorageHelperNullException("model");
 
-    // Decomment for print model
-    // Use in test
-    // log("Model:");
-    // print(model.toMap);
+      // Decomment for print model
+      // Use in test
+      // log("Model:");
+      // print(model.toMap);
 
-    for(int i = 0;i < model.categories.length;i++) { // Add a class for each category
-      if(!validKey(model.categories[i].key!)) new StorageHelperValidKeyException(model.categories[i].key);
-      // I check that there is no category with this key
-      if(categoriesKeys.contains(model.categories[i].key)) throw new StorageHelperDuplicateException("categories");
-      categoriesKeys.add(model.categories[i].key!);  // Add category's key to list
-      code += "\n${createClass(i, model.categories[i])}";
-    }
-
-    // Per ogni categoria inserisco gli attributi per le sottocategorie e i costruttori
-    for(int i = 0;i < model.categories.length;i++) {
-      String replace1 = "";
-      String from1 = "{{sottoCategorie${i.toString()}}}";
-      String replace2 = "";
-      String from2 = "{{costruttore${i.toString()}}}";
-
-      try {
-        int count = 0;
-        replace2 += " {\n";
-
-        for(StorageHelperCategoryChild child in sottocategorie.where(
-                (StorageHelperCategoryChild child) => child.parentKey == model.categories[i].key
-        ).toList()) {
-          if(child.code != null) replace1 += "\n${child.code}";
-          if(child.constructorCode != null) replace2 += child.constructorCode as String;
-
-          count++;
-        }
-
-        replace2 += "\n    }";
-
-        if(count == 0) replace2 = "";
-      } catch(e, stacktrace) {
-        print(e);
-        print(stacktrace);
+      for(int i = 0;i < model.categories.length;i++) { // Add a class for each category
+        if(!validKey(model.categories[i].key!)) new StorageHelperValidKeyException(model.categories[i].key);
+        // I check that there is no category with this key
+        if(categoriesKeys.contains(model.categories[i].key)) throw new StorageHelperDuplicateException("categories");
+        categoriesKeys.add(model.categories[i].key!);  // Add category's key to list
+        code += "\n${createClass(i, model.categories[i])}";
       }
 
-      if(replace2 == "") replace2 = ";";
+      // Per ogni categoria inserisco gli attributi per le sottocategorie e i costruttori
+      for(int i = 0;i < model.categories.length;i++) {
+        String replace1 = "";
+        String from1 = "{{sottoCategorie${i.toString()}}}";
+        String replace2 = "";
+        String from2 = "{{costruttore${i.toString()}}}";
 
-      code = code.replaceAll(from1, replace1);
-      code = code.replaceAll(from2, replace2);
+        try {
+          int count = 0;
+          replace2 += " {\n";
+
+          for(StorageHelperCategoryChild child in sottocategorie.where(
+                  (StorageHelperCategoryChild child) => child.parentKey == model.categories[i].key
+          ).toList()) {
+            if(child.code != null) replace1 += "\n${child.code}";
+            if(child.constructorCode != null) replace2 += child.constructorCode as String;
+
+            count++;
+          }
+
+          replace2 += "\n    }";
+
+          if(count == 0) replace2 = "";
+        } catch(e, stacktrace) {
+          print(e);
+          print(stacktrace);
+        }
+
+        if(replace2 == "") replace2 = ";";
+
+        code = code.replaceAll(from1, replace1);
+        code = code.replaceAll(from2, replace2);
+      }
+
+      code = code.replaceAll("{{sub-categories-example}}", addDartComment(subCategoriesExample, "    "));
+      code = code.replaceAll("{{get-example}}", addDartComment(getExample));
+      code = code.replaceAll("{{set-example}}", addDartComment(setExample));
+      code = code.replaceAll("{{delete-example}}", addDartComment(deleteExample));
+
+      storageHelperLog("end!");
+
+      // Decomment for print code
+      // Use in test
+      // print(code);
+    } catch(e, stacktrace) {
+      print(e);
+      print(stacktrace);
+
+      storageHelperLog("ERROR!!!");
     }
-
-    code = code.replaceAll("{{sub-categories-example}}", addDartComment(subCategoriesExample, "    "));
-    code = code.replaceAll("{{get-example}}", addDartComment(getExample));
-    code = code.replaceAll("{{set-example}}", addDartComment(setExample));
-    code = code.replaceAll("{{delete-example}}", addDartComment(deleteExample));
-
-    storageHelperLog("end!");
-
-    // Decomment for print code
-    // Use in test
-    // print(code);
 
     return code;
   }
