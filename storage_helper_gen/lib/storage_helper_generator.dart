@@ -118,7 +118,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
           parentKey: category.parent as String,
           code: attributesCode,
           constructorCode: "\n        ${category.key} = new $className(model);        // Initialize object",
-          onInit: "\n        await ${category.key}.init();"
+          onInit: "\n        log([\"\"\"Initialize $className...\"\"\"]);\n        await ${category.key}.init();"
       ));
     }else {
       if(countAnonymous > 0) throw new StorageHelperException("There can only be one category without a key and it is the main one");
