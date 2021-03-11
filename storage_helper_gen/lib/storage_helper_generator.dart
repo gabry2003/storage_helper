@@ -344,6 +344,7 @@ part of 'storage_helper.dart';
 
         code = code.replaceAll(from1, replace1);
         code = code.replaceAll(from2, replace2);
+        code = code.replaceAll(from3, replace3);
       }
 
       code = code.replaceAll("{{sub-categories-example}}", addDartComment(subCategoriesExample, "    "));
