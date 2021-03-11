@@ -39,13 +39,21 @@ class StorageHelperConverter {
   String? reConvert<T>(T val) {
     switch(T.toString()) {
       case "bool":
-        return ((val as bool) ?? false) ? "1" : "0";
+        return (val as bool) ? "1" : "0";
+      case "bool?":
+        return ((val as bool?) ?? false) ? "1" : "ß";
       case "int":
       case "double":
         return val.toString();
+      case "int?":
+      case "double?":
+        return val?.toString();
       case "DateTime":
+      case "DateTime?":
         return new DateFormat(model.dateFormat).format(val as DateTime);
       case "String":
+        return val as String;
+      case "String?":
         return val as String?;
       default:
         return model.getType(T.toString())?.convertToString(val);
