@@ -112,7 +112,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
 
       String attributesCode = "\n    // Use this attribute to access to sub-category ${category.key}";
       if((category.description?.length ?? 0) > 0) for(String? desc in category.description!) attributesCode += "\n    /// $desc";
-      attributesCode += "\n    $className ${category.key};";
+      attributesCode += "\n    late $className ${category.key};";
 
       sottocategorie.add(StorageHelperCategoryChild(
           parentKey: category.parent as String,
