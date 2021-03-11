@@ -183,21 +183,23 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
 
           switch(type) {
             case "StorageHelperType.String":
-              variableType = "String?";
+              variableType = "String";
               break;
             case "StorageHelperType.DateTime":
-              variableType = "DateTime?";
+              variableType = "DateTime";
               break;
             case "StorageHelperType.int":
-              variableType = "int?";
+              variableType = "int";
               break;
             case "StorageHelperType.double":
-              variableType = "double?";
+              variableType = "double";
               break;
             case "StorageHelperType.bool":
-              variableType = "bool?";
+              variableType = "bool";
               break;
           }
+
+          if(element.defaultValue == null) variableType += "?";
         }
       }
 
