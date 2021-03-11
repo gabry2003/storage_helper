@@ -299,7 +299,7 @@ part of 'storage_helper.dart';
       // print(model.toMap);
 
       for(int i = 0;i < model.categories.length;i++) { // Add a class for each category
-        if(!validKey(model.categories[i].key!)) new StorageHelperValidKeyException(model.categories[i].key);
+        if(!validKey(model.categories[i].key)) new StorageHelperValidKeyException(model.categories[i].key);
         // I check that there is no category with this key
         if(categoriesKeys.contains(model.categories[i].key)) throw new StorageHelperDuplicateException("categories");
         categoriesKeys.add(model.categories[i].key!);  // Add category's key to list
