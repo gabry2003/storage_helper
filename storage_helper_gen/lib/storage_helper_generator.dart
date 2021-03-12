@@ -299,7 +299,6 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
 /// - to edit element's content call the set method in camelCase{{set-example}}
 /// - to delete element's content call the delete method in camelCase{{delete-example}}
 
-part of 'storage_helper.dart';
 """;
 
     try {
