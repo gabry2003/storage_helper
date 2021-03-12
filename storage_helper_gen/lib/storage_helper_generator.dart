@@ -317,14 +317,14 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
             "        ).map("
             "            (String key) async => await set<$variableTypeSet>(key, null)\n"
             "        ))).toList();";
-        toMap += "        \"${element.key}\": await getAll$firstUpper(),";
+        toMap += "\n        \"${element.key}\": await getAll$firstUpper(),";
       }else {
-        toMap += "        \"${element.key}\": await get$firstUpper(),";
+        toMap += "\n        \"${element.key}\": await get$firstUpper(),";
       }
 
     }
 
-    toMap += "{{toMap${index.toString()}}}\n    }";
+    toMap += "{{toMap${index.toString()}}}\n    };";
     init += "\n    }";
 
     code += "\n    // Static attributes with the names of the keys so that they can also be accessed from the outside";
@@ -336,7 +336,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
 
     code += "\n    /// Model from storage_helper.dart\n"
         "    StorageHelperModel model;\n\n"
-        "$className(this.model) : super(model){{costruttore${index.toString()}}}";
+        "    $className(this.model) : super(model){{costruttore${index.toString()}}}";
 
     code += getSet;
 
