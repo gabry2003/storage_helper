@@ -217,6 +217,8 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
               break;
           }
 
+          variableTypeSet = variableTypeGet + "?";
+
           // if it must return a date it must do a parse so it could go into the catch and return null, so it is nullable, same thing if it does not has a default value
           if(element.defaultValue == null || variableTypeGet == "DateTime") variableTypeGet += "?";
         }
