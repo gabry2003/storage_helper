@@ -251,7 +251,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       String getArguments = "";
       String deleteArgumentsCode = "";
 
-      for(int i = 0;i < (element.concateneKeys?.length ?? 0);i++) {
+      for(int i = 0;i < (element.concateneKeysFromArgument?.length ?? 0);i++) {
         getArguments += "String? ${element.concateneKeysFromArgument?[i]}, ";
         deleteArgumentsCode += ", ${element.concateneKeysFromArgument?[i]}: ${element.concateneKeysFromArgument?[i]}";
       }
