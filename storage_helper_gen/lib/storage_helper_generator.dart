@@ -166,7 +166,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
         deleteAllArguments += "String? ${element.concateneKeys?[i]},";
       }
 
-      String deleteAllArgumentsCode = deleteAllArguments != "" ? "{$deleteAllArguments}" : "";
+      String deleteAllArgumentsCode = deleteAllArguments != "" ? "\{$deleteAllArguments\}" : "";
 
       for(int i = 0;i < (element.concateneKeys?.length ?? 0);i++) nameForGet += " + (${element.concateneKeysFromArgument?[i]} ?? \"\")";
 
@@ -256,7 +256,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
         deleteArgumentsCode += ", ${element.concateneKeysFromArgument?[i]}: ${element.concateneKeysFromArgument?[i]}";
       }
 
-      String getArgumentsCode = getArguments != "" ? "{$getArguments}" : "";
+      String getArgumentsCode = getArguments != "" ? "\{$getArguments\}" : "";
       String setArgumentsCode = getArguments != "" ? ", $getArgumentsCode" : "";
 
       // Get
@@ -274,7 +274,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
             "    /// ```dart\n"
             "    /// List<$variableTypeGet> ${element.key} = await $objName.getAll$firstUpper();\n"
             "    /// ```\n"
-            "    Future<List<$variableTypeGet>> getAll$firstUpper() async => {\n"
+            "    Future<List<$variableTypeGet>> getAll$firstUpper($deleteAllArgumentsCode) async => {\n"
             "        List<$variableTypeGet> results = [];\n"
             "\n"
             "        Map<String, String> all = await readAll();\n"
