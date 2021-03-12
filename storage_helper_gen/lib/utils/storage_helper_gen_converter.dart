@@ -83,13 +83,15 @@ class StorageHelperGenConverter {
           String? dateFormat = getStringValue(obj, "dateFormat");
 
           List<String?>? concateneKeys = getList<String>(getListValue(obj, "concateneKeys"));
+          List<String?>? concateneKeysFromArgument = getList<String>(getListValue(obj, "concateneKeysFromArgument"));
           List<String?>? description = getList<String>(getListValue(obj, "description"));
 
           bool? onInit = getBoolValue(obj, "onInit");
           bool? defaultIsCode = getBoolValue(obj, "defaultIsCode");
+          bool? onlyFunction = getBoolValue(obj, "onlyFunction");
 
           dynamic? type;
-          dynamic defaultValue;
+          dynamic? defaultValue;
 
           String? typeToString = obj?.getField("type")?.toString();
           String? defaultValueToString = obj?.getField("defaultValue")?.toString();
@@ -114,7 +116,19 @@ class StorageHelperGenConverter {
             }
 
             try {
-              if(defaultValueToString?.contains("bool") ?? false) { // Se è un booleano
+              if(defaultValueToString?.contains("bool?") ?? false) { // Se è un booleano
+                defaultValue = defaultValueToString?.substring(0, defaultValueToString.length - 1).replaceAll("bool? (", "") == "true";
+              }else if(defaultValueToString?.contains("int?") ?? false) {  // Se è un intero
+                defaultValue = int?.tryParse(defaultValueToString?.substring(0, defaultValueToString.length - 1).replaceAll("int? (", "") as String);
+              }else if(defaultValueToString?.contains("double?") ?? false) {  // Se è un double
+                defaultValue = double?.tryParse(defaultValueToString?.substring(0, defaultValueToString.length - 1).replaceAll("int? (", "") as String);
+              }else if(defaultValueToString?.contains("DateTime?") ?? false) {  // Se è un DateTime
+                defaultValue = DateTime?.parse(defaultValueToString?.substring(0, defaultValueToString.length - 1).replaceAll("DateTime? (", "") as String);
+              }else if(defaultValueToString?.contains("String?") ?? false) {  // Se è un String
+                defaultValue = defaultValueToString?.substring(0, defaultValueToString.length - 1).replaceAll("String? (", "");
+                defaultValue = defaultValue?.substring(0, defaultValue.length - 1);  // RImuovo l'ultimo carattere (apice)
+                defaultValue = defaultValue?.substring(1); // Rimuovo il primo carattere (apice)
+              }else if(defaultValueToString?.contains("bool") ?? false) { // Se è un booleano
                 defaultValue = defaultValueToString?.substring(0, defaultValueToString.length - 1).replaceAll("bool (", "") == "true";
               }else if(defaultValueToString?.contains("int") ?? false) {  // Se è un intero
                 defaultValue = int.tryParse(defaultValueToString?.substring(0, defaultValueToString.length - 1).replaceAll("int (", "") as String);
@@ -124,8 +138,8 @@ class StorageHelperGenConverter {
                 defaultValue = DateTime.parse(defaultValueToString?.substring(0, defaultValueToString.length - 1).replaceAll("DateTime (", "") as String);
               }else if(defaultValueToString?.contains("String") ?? false) {  // Se è un String
                 defaultValue = defaultValueToString?.substring(0, defaultValueToString.length - 1).replaceAll("String (", "");
-                defaultValue = defaultValue.substring(0, defaultValue.length - 1);  // RImuovo l'ultimo carattere (apice)
-                defaultValue = defaultValue.substring(1); // Rimuovo il primo carattere (apice)
+                defaultValue = defaultValue?.substring(0, defaultValue.length - 1);  // RImuovo l'ultimo carattere (apice)
+                defaultValue = defaultValue?.substring(1); // Rimuovo il primo carattere (apice)
               }
             } catch(e) {
               throw new StorageHelperException("Unable to get default value of element with key \"§key\§");
@@ -145,11 +159,13 @@ class StorageHelperGenConverter {
                 staticKey: staticKey,
                 getKey: getKey,
                 concateneKeys: concateneKeys,
+                concateneKeysFromArgument: concateneKeysFromArgument,
                 type: type,
                 onInit: onInit,
                 description: description,
                 defaultValue: defaultValue,
                 defaultIsCode: defaultIsCode,
+                onlyFunction: onlyFunction,
                 dateFormat: dateFormat
             );
           }else {
@@ -158,11 +174,13 @@ class StorageHelperGenConverter {
                 staticKey: staticKey,
                 getKey: getKey,
                 concateneKeys: concateneKeys,
+                concateneKeysFromArgument: concateneKeysFromArgument,
                 type: type,
                 onInit: onInit,
                 description: description,
                 defaultValue: defaultValue,
                 defaultIsCode: defaultIsCode,
+                onlyFunction: onlyFunction,
                 dateFormat: dateFormat
             );
           }

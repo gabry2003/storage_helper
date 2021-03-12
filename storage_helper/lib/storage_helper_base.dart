@@ -30,6 +30,9 @@ class StorageHelperBase {
       key: key
   );
 
+  /// Reads a value given the [key]
+  Future<Map<String, String>> readAll(String key) async => await storage.readAll();
+
   /// Write [value] inside [key]
   Future<void> write(String key, String? value) async => await storage.write(
       key: key,
