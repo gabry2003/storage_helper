@@ -42,9 +42,9 @@ class StorageHelperBase {
   );
 
   /// Converts [key] and a [defaultValue] from string to data element
-  Future<T> convertEl<T>(String key, T defaultValue) async {
+  Future<T> convertEl<T>(String key, {T? defaultValue, String? dateFormat}) async {
     try {
-      String? val = await read(key) ?? converter?.reConvert<T>(defaultValue);
+      String? val = await read(key) ?? converter?.reConvert<T>(defaultValue as T, dateFormat: dateFormat);
 
       if(val == null) return null as T;
 
@@ -59,10 +59,10 @@ class StorageHelperBase {
 
   /// Insert the value [val] into the element with the key "[key]"
   /// Returns `true` if the operation was successful, otherwise returns `false`
-  Future<bool> set<T>(String key, T? val) async {
+  Future<bool> set<T>(String key, T? val, {String? dateFormat}) async {
     try {
       if(val != null) {
-        await write(key, converter?.reConvert<T>(val));
+        await write(key, converter?.reConvert<T>(val, dateFormat: dateFormat));
 
         log(["$key = ${val.toString()}"]);
       }else {
@@ -80,11 +80,9 @@ class StorageHelperBase {
   }
 
   /// Returns the value of the element with the key [key] and if it is null it returns [defaultValue]
-  Future<T> get<T>(String key, T defaultValue) async {
+  Future<T> get<T>(String key, {T? defaultValue, String? dateFormat}) async {
     try {
-      log(["getting \"$key\"..."]);
-
-      T val = await convertEl<T>(key, defaultValue);
+      T val = await convertEl<T>(key, defaultValue: defaultValue, dateFormat: dateFormat);
 
       log(["$key = ${val.toString()}"]);
 

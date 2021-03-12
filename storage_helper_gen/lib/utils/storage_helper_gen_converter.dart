@@ -80,8 +80,11 @@ class StorageHelperGenConverter {
           String key = getStringValue(obj, "key") as String;
           String? staticKey = getStringValue(obj, "staticKey");
           String? getKey = getStringValue(obj, "getKey");
+          String? dateFormat = getStringValue(obj, "dateFormat");
+
           List<String?>? concateneKeys = getList<String>(getListValue(obj, "concateneKeys"));
           List<String?>? description = getList<String>(getListValue(obj, "description"));
+
           bool? onInit = getBoolValue(obj, "onInit");
           bool? defaultIsCode = getBoolValue(obj, "defaultIsCode");
 
@@ -146,7 +149,8 @@ class StorageHelperGenConverter {
                 onInit: onInit,
                 description: description,
                 defaultValue: defaultValue,
-                defaultIsCode: defaultIsCode
+                defaultIsCode: defaultIsCode,
+                dateFormat: dateFormat
             );
           }else {
             element = StorageHelperElement<String>(
@@ -158,7 +162,8 @@ class StorageHelperGenConverter {
                 onInit: onInit,
                 description: description,
                 defaultValue: defaultValue,
-                defaultIsCode: defaultIsCode
+                defaultIsCode: defaultIsCode,
+                dateFormat: dateFormat
             );
           }
 

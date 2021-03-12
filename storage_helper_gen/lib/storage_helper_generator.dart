@@ -1,4 +1,7 @@
 // ignore: import_of_legacy_library_into_null_safe
+import 'dart:async';
+
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:analyzer/dart/element/element.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:build/build.dart';
@@ -157,17 +160,19 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
         nameForGet += " + ${element.concateneKeys?[i]}";
       }
 
-      String variableTypeGet = "dynamic";
-      String variableTypeSet = "dynamic";
+      String variableTypeGet = "dynamic?";
+      String variableTypeSet = "dynamic?";
 
       String getKey = element.getKey ?? element.key;
       String firstUpper = upperFirst(getKey);
       String type;
       String? defaultValue;
+      String? dateFormat = element.dateFormat?.toString();
 
-      if(element.type is String) { // Se l'elemento ha un tipo personalizzato
-        variableTypeGet = element.type;
-        variableTypeSet = variableTypeGet + "?";
+      if(element.type is String) { // If element has a custom type
+        // if it has a custom type it has to do some conversions so it is nullable
+        variableTypeGet = element.type + "?";
+        variableTypeSet = variableTypeGet;
         type = "\"${element.type}\"";
         element.defaultValue != null ? defaultValue = validateDefaultValue(element.defaultValue, element.key)! : defaultValue = "null";
       }else {
@@ -202,14 +207,17 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
               break;
           }
 
+          // if it must return a date it must do a parse so it could go into the catch and return null, so it is nullable, same thing if it does not has a default value
+          if(element.defaultValue == null || variableTypeGet == "DateTime") variableTypeGet += "?";
           variableTypeSet = variableTypeGet + "?";
-
-          if(element.defaultValue == null) variableTypeGet += "?";
         }
       }
 
-      String getCode = "await get<$variableTypeGet>($nameForGet, $defaultValue);";
-      String setCode = "await set<$variableTypeSet>($nameForGet, ${element.key});";
+      String dateFormatCode = dateFormat != "null" && dateFormat != null && dateFormat != "" ? ", dateFormat: \"$dateFormat\"" : "";
+      String defaultValueCode = defaultValue != "null" && defaultValue != null ? ", defaultValue: $defaultValue" : "";
+
+      String getCode = "await get<$variableTypeGet>($nameForGet$defaultValueCode$dateFormatCode);";
+      String setCode = "await set<$variableTypeSet>($nameForGet, ${element.key}$dateFormatCode);";
 
       if((element.description?.length ?? 0) > 0) for(String? desc in element.description!) statics += "\n    /// $desc";
       statics += "\n    static const String $staticName = \"${element.key}\";";
@@ -274,7 +282,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
   }
 
   @override
-  generateForAnnotatedElement(
+  FutureOr<String> generateForAnnotatedElement(
       Element element, ConstantReader annotation, BuildStep buildStep) {
     storageHelperLog("start...");
 

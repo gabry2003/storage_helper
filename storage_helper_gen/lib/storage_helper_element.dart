@@ -36,9 +36,11 @@ class StorageHelperElement<T> {
   final dynamic? defaultValue;
   /// If the default is a piece of code
   final bool? defaultIsCode;
+  /// It is used when this specific element (of type DateTime) must have a different date format
+  final String? dateFormat;
 
   /// Constructor, accepts all attributes as parameters
-  const StorageHelperElement({required this.key, this.staticKey, this.getKey, this.concateneKeys, required this.type, this.onInit=false, this.description, this.defaultValue, this.defaultIsCode=false});
+  const StorageHelperElement({required this.key, this.staticKey, this.getKey, this.concateneKeys, required this.type, this.onInit=false, this.description, this.defaultValue, this.defaultIsCode=false, this.dateFormat});
 
   /// Returns the attributes of the object as a Map
   /// Useful for printing the entire object in a single call
@@ -51,6 +53,7 @@ class StorageHelperElement<T> {
     "onInit": onInit,
     "description": description,
     "defaultValue": defaultValue,
-    "defaultIsCode": defaultIsCode
+    "defaultIsCode": defaultIsCode,
+    "dateFormat": dateFormat
   };
 }
