@@ -104,6 +104,12 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
     String className = "StorageHelper";
     String objName = "storageHelper";
 
+    String gettersAndSetters = "\n\n    // Getters and setters\n"
+        "    StorageHelperModel get model => _model;\n"
+        "    set model(StorageHelperModel model) {\n"
+        "        _model = model;\n"
+        "    }";
+
     if(category.key != null) {  // Se è presente la chiave della categoria
       if(category.parent != null) objName += ".${category.parent}";
       objName += ".${category.key}";
@@ -115,14 +121,18 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
 
       String attributesCode = "\n    // Use this attribute to access to sub-category ${category.key}";
       if((category.description?.length ?? 0) > 0) for(String? desc in category.description!) attributesCode += "\n    /// $desc";
-      attributesCode += "\n    late $className ${category.key};";
+      attributesCode += "\n    late $className _${category.key};";
+      gettersAndSetters += "\n    $className get ${category.key} => _${category.key};\n"
+          "    set ${category.key}($className ${category.key}) {\n"
+          "        _${category.key} = ${category.key};\n"
+          "    }";
 
       sottocategorie.add(StorageHelperCategoryChild(
           parentKey: category.parent as String,
           code: attributesCode,
           constructorCode: "\n        ${category.key} = new $className(model);        // Initialize object",
           onInit: "\n        log([\"\"\"Initialize $className...\"\"\"]);\n        await ${category.key}.init();",
-          toMap: "\n        ${category.key}: await ${category.key}.toMap,"
+          toMap: "\n        \"${category.key}\": await ${category.key}.toMap,"
       ));
     }else {
       if(countAnonymous > 0) throw new StorageHelperException("There can only be one category without a key and it is the main one");
@@ -142,6 +152,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
     String code = "";
     if((category.description?.length ?? 0) > 0) for(String? desc in category.description!) code += "\n/// $desc";
     code += """\nclass $className extends StorageHelperBase {""";
+
     String getSet = "\n";
     String statics = "";
     String attributes = "{{sottoCategorie${index.toString()}}}";
@@ -239,8 +250,12 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       getSet += "\n\n    // Getter and setter for the key \"${element.key}\"";
       if(element.onInit ?? false) {
         if((element.description?.length ?? 0) > 0) for(String? desc in element.description!) attributes += "\n    /// $desc";
-        attributes += "\n    late $variableTypeGet $getKey = $defaultValue;  // Attribute to take the key value without making an asynchronous call";
+        attributes += "\n    late $variableTypeGet _$getKey" + (defaultValue != "null" && defaultValue != null ? " = $defaultValue" : "") + ";  // Attribute to take the key value without making an asynchronous call";
         init += "\n        ${element.key} = await get$firstUpper();  // Initially put the value inside the attribute";
+        gettersAndSetters += "\n    get $getKey => _$getKey;\n"
+            "    set $getKey($variableTypeGet $getKey) {\n"
+            "        _$getKey = $getKey;\n"
+            "    }";
       }else {
         if(!(element.onlyFunction ?? false)) {
           getSet += "\n\n    /// Return value of ${element.key}\n"
@@ -335,8 +350,8 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
     code += attributes;
 
     code += "\n    /// Model from storage_helper.dart\n"
-        "    StorageHelperModel model;\n\n"
-        "    $className(this.model) : super(model){{costruttore${index.toString()}}}";
+        "    StorageHelperModel _model;\n\n"
+        "    $className(this._model) : super(_model){{costruttore${index.toString()}}}";
 
     code += getSet;
 
@@ -349,6 +364,8 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
     if(category.addSource != null) code += "\n    // Additional code\n${category.addSource}";
 
     code += init;
+
+    code += gettersAndSetters;
 
     code += toMap;
 
@@ -447,7 +464,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
 
       // Decomment for print code
       // Use in test
-      print(code);
+      // print(code);
     } catch(e, stacktrace) {
       print(e);
       print(stacktrace);

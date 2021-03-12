@@ -3,7 +3,7 @@ import 'package:storage_helper/storage_helper_converter.dart';
 import 'package:storage_helper_gen/storage_helper_model.dart';
 
 /// Parent class of all generated helpers
-class StorageHelperBase {
+abstract class StorageHelperBase {
   /// StorageHelper's model
   final StorageHelperModel model;
   /// FlutterSecureStorage's object
@@ -97,4 +97,13 @@ class StorageHelperBase {
       return defaultValue as T;
     }
   }
+
+  /// toMap get, it is required
+  Future<Map> get toMap;
+
+  /// init method, it is required
+  Future<void> init();
+
+  /// delete all method, it is required
+  Future<void> deleteAll();
 }
