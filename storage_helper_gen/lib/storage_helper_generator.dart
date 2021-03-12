@@ -121,7 +121,8 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
           parentKey: category.parent as String,
           code: attributesCode,
           constructorCode: "\n        ${category.key} = new $className(model);        // Initialize object",
-          onInit: "\n        log([\"\"\"Initialize $className...\"\"\"]);\n        await ${category.key}.init();"
+          onInit: "\n        log([\"\"\"Initialize $className...\"\"\"]);\n        await ${category.key}.init();",
+          toMap: "\n        ${category.key}: await ${category.key}.toMap,"
       ));
     }else {
       if(countAnonymous > 0) throw new StorageHelperException("There can only be one category without a key and it is the main one");
@@ -146,6 +147,8 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
     String attributes = "{{sottoCategorie${index.toString()}}}";
     String init = "\n    /// You can call this method to initialize accessible elements even without asynchronous methods\n"
         "    Future<void> init() async {{{onInit${index.toString()}}}";
+    String toMap = "\n    /// You can call this method to get all elements by key\n"
+        "    Future<Map> get toMap async => {";
 
     for(StorageHelperElement element in elements) {
       if(!validKey(element.key)) throw new StorageHelperValidKeyException(element.key);
@@ -270,16 +273,25 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
           "    Future<$variableTypeGet> get$firstUpper($getArgumentsCode) async => $getCode";
 
       if((element.concateneKeys?.length ?? 0) > 0 || (element.concateneKeysFromArgument?.length ?? 0) > 0) {
-        getSet += "\n\n    /// Return all element where key contains ${element.key}\n"
-            "    /// Return a variable of type \"List<$variableTypeGet>\"\n"
+        getSet += "\n\n    /// Return all elements where key contains ${element.key}\n"
+            "    /// Return a variable of type \"Map<String, $variableTypeGet>\"\n"
             "    /// ```dart\n"
-            "    /// List<$variableTypeGet> ${element.key} = await $objName.getAll$firstUpper();\n"
+            "    /// Map<String, $variableTypeGet> ${element.key}All = await $objName.getAll$firstUpper();\n"
             "    /// ```\n"
-            "    Future<List<$variableTypeGet>> getAll$firstUpper($deleteAllArgumentsCode) async => (await Future.wait((await readAll()).keys.where(\n"
+            "    /// \n"
+            "    /// The optional named parameters can be used to filter the results based on a certain value you passed.\n"
+            "    /// If you do not enter them or enter an empty string they are not counted\n"
+            "    Future<Map<String, $variableTypeGet>> getAll$firstUpper($deleteAllArgumentsCode) async {\n"
+            "        Map<String, $variableTypeGet> results = {};\n"
+            "\n"
+            "        List<String> keys = (await readAll()).keys.where(\n"
             "            (String key) => key.contains($staticName)$deleteAllCondition\n"
-            "        ).map("
-            "            (String key) async => await get<$variableTypeGet>(key$defaultValueCode$dateFormatCode)\n"
-            "        ))).toList();";
+            "        ).toList();\n"
+            "\n"
+            "        for(String key in keys) results[key] = await get<$variableTypeGet>(key$defaultValueCode$dateFormatCode);\n"
+            "\n"
+            "        return results;\n"
+            "    }\n";
       }
 
       // Set
@@ -305,10 +317,14 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
             "        ).map("
             "            (String key) async => await set<$variableTypeSet>(key, null)\n"
             "        ))).toList();";
+        toMap += "        \"${element.key}\": await getAll$firstUpper(),";
+      }else {
+        toMap += "        \"${element.key}\": await get$firstUpper(),";
       }
 
     }
 
+    toMap += "{{toMap${index.toString()}}}\n    }";
     init += "\n    }";
 
     code += "\n    // Static attributes with the names of the keys so that they can also be accessed from the outside";
@@ -333,6 +349,8 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
     if(category.addSource != null) code += "\n    // Additional code\n${category.addSource}";
 
     code += init;
+
+    code += toMap;
 
     code += "\n}";
 
@@ -386,6 +404,8 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
         String from2 = "{{costruttore${i.toString()}}}";
         String replace3 = "";
         String from3 = "{{onInit${i.toString()}}}";
+        String replace4 = "";
+        String from4 = "{{toMap${i.toString()}}}";
 
         try {
           int count = 0;
@@ -397,6 +417,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
             if(child.code != null) replace1 += "\n${child.code}";
             if(child.constructorCode != null) replace2 += child.constructorCode as String;
             if(child.onInit != null) replace3 += child.onInit as String;
+            if(child.toMap != null) replace4 += child.toMap as String;
 
             count++;
           }
@@ -414,6 +435,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
         code = code.replaceAll(from1, replace1);
         code = code.replaceAll(from2, replace2);
         code = code.replaceAll(from3, replace3);
+        code = code.replaceAll(from4, replace4);
       }
 
       code = code.replaceAll("{{sub-categories-example}}", addDartComment(subCategoriesExample, "    "));
