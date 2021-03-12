@@ -56,7 +56,7 @@ class StorageHelperBase {
       print(e);
       print(stacktrace);
 
-      return null as T;
+      return defaultValue as T;
     }
   }
 
@@ -94,7 +94,7 @@ class StorageHelperBase {
       print(e);
       print(stacktrace);
 
-      return null as T;
+      return defaultValue as T;
     }
   }
 }

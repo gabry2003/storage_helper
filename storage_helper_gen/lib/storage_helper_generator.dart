@@ -168,7 +168,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
 
       String deleteAllArgumentsCode = deleteAllArguments != "" ? "\{$deleteAllArguments\}" : "";
 
-      for(int i = 0;i < (element.concateneKeys?.length ?? 0);i++) nameForGet += " + (${element.concateneKeysFromArgument?[i]} ?? \"\")";
+      for(int i = 0;i < (element.concateneKeysFromArgument?.length ?? 0);i++) nameForGet += " + (${element.concateneKeysFromArgument?[i]} ?? \"\")";
 
       String variableTypeGet = "dynamic?";
       String variableTypeSet = "dynamic?";
