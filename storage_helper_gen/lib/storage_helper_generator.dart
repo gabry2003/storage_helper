@@ -439,7 +439,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
 
       // Decomment for print code
       // Use in test
-      // print(code);
+      print(code);
     } catch(e, stacktrace) {
       print(e);
       print(stacktrace);
