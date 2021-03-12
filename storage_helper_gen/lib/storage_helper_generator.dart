@@ -438,7 +438,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
             if(child.constructorCode != null) replace2 += child.constructorCode as String;
             if(child.onInit != null) replace3 += child.onInit as String;
             if(child.toMap != null) replace4 += child.toMap as String;
-            if(child.gettersAndSetters != null) replace5 += child.toMap as String;
+            if(child.gettersAndSetters != null) replace5 += child.gettersAndSetters as String;
 
             count++;
           }
