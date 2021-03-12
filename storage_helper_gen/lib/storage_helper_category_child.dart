@@ -13,7 +13,9 @@ class StorageHelperCategoryChild {
   final String? onInit;
   /// code to insert in toMap method
   final String? toMap;
+  /// code to insert getters and setters
+  final String? gettersAndSetters;
 
   /// Constructor, accepts all attributes as parameters
-  const StorageHelperCategoryChild({required this.parentKey, this.code, this.constructorCode, this.onInit, this.toMap});
+  const StorageHelperCategoryChild({required this.parentKey, this.code, this.constructorCode, this.onInit, this.toMap, this.gettersAndSetters});
 }

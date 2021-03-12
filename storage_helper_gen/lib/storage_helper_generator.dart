@@ -122,17 +122,17 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       String attributesCode = "\n    // Use this attribute to access to sub-category ${category.key}";
       if((category.description?.length ?? 0) > 0) for(String? desc in category.description!) attributesCode += "\n    /// $desc";
       attributesCode += "\n    late $className _${category.key};";
-      gettersAndSetters += "\n    $className get ${category.key} => _${category.key};\n"
-          "    set ${category.key}($className ${category.key}) {\n"
-          "        _${category.key} = ${category.key};\n"
-          "    }";
 
       sottocategorie.add(StorageHelperCategoryChild(
           parentKey: category.parent as String,
           code: attributesCode,
           constructorCode: "\n        ${category.key} = new $className(model);        // Initialize object",
           onInit: "\n        log([\"\"\"Initialize $className...\"\"\"]);\n        await ${category.key}.init();",
-          toMap: "\n        \"${category.key}\": await ${category.key}.toMap,"
+          toMap: "\n        \"${category.key}\": await ${category.key}.toMap,",
+          gettersAndSetters: "\n    $className get ${category.key} => _${category.key};\n"
+              "    set ${category.key}($className ${category.key}) {\n"
+              "        _${category.key} = ${category.key};\n"
+              "    }"
       ));
     }else {
       if(countAnonymous > 0) throw new StorageHelperException("There can only be one category without a key and it is the main one");
@@ -252,7 +252,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
         if((element.description?.length ?? 0) > 0) for(String? desc in element.description!) attributes += "\n    /// $desc";
         attributes += "\n    late $variableTypeGet _$getKey" + (defaultValue != "null" && defaultValue != null ? " = $defaultValue" : "") + ";  // Attribute to take the key value without making an asynchronous call";
         init += "\n        ${element.key} = await get$firstUpper();  // Initially put the value inside the attribute";
-        gettersAndSetters += "\n    get $getKey => _$getKey;\n"
+        gettersAndSetters += "\n    $variableTypeGet get $getKey => _$getKey;\n"
             "    set $getKey($variableTypeGet $getKey) {\n"
             "        _$getKey = $getKey;\n"
             "    }";
@@ -366,6 +366,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
     code += init;
 
     code += gettersAndSetters;
+    code += "{{gettersAndSetters${index.toString()}}}";
 
     code += toMap;
 
@@ -423,6 +424,8 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
         String from3 = "{{onInit${i.toString()}}}";
         String replace4 = "";
         String from4 = "{{toMap${i.toString()}}}";
+        String replace5 = "";
+        String from5 = "{{gettersAndSetters${i.toString()}}}";
 
         try {
           int count = 0;
@@ -435,6 +438,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
             if(child.constructorCode != null) replace2 += child.constructorCode as String;
             if(child.onInit != null) replace3 += child.onInit as String;
             if(child.toMap != null) replace4 += child.toMap as String;
+            if(child.gettersAndSetters != null) replace5 += child.toMap as String;
 
             count++;
           }
@@ -453,6 +457,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
         code = code.replaceAll(from2, replace2);
         code = code.replaceAll(from3, replace3);
         code = code.replaceAll(from4, replace4);
+        code = code.replaceAll(from5, replace5);
       }
 
       code = code.replaceAll("{{sub-categories-example}}", addDartComment(subCategoriesExample, "    "));
