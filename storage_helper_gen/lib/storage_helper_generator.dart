@@ -209,7 +209,6 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
 
           // if it must return a date it must do a parse so it could go into the catch and return null, so it is nullable, same thing if it does not has a default value
           if(element.defaultValue == null || variableTypeGet == "DateTime") variableTypeGet += "?";
-          variableTypeSet = variableTypeGet + "?";
         }
       }
 
@@ -225,7 +224,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       getSet += "\n\n    // Getter and setter for the key \"${element.key}\"";
       if(element.onInit ?? false) {
         if((element.description?.length ?? 0) > 0) for(String? desc in element.description!) attributes += "\n    /// $desc";
-        attributes += "\n    $variableTypeGet $getKey = $defaultValue;  // Attribute to take the key value without making an asynchronous call";
+        attributes += "\n    late $variableTypeGet $getKey = $defaultValue;  // Attribute to take the key value without making an asynchronous call";
         init += "\n        ${element.key} = await get$firstUpper();  // Initially put the value inside the attribute";
       }else {
         getSet += "\n\n    /// Return value of ${element.key}\n"
