@@ -162,7 +162,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       // Add the keys
       for(int i = 0;i < (element.concateneKeys?.length ?? 0);i++) {
         nameForGet += " + ${element.concateneKeys?[i]}";
-        deleteAllCondition += " && (((${element.concateneKeys?[i]} ?? \"\") != \"\") ? key.contains(${element.concateneKeys?[i]} as String) : true)";
+        deleteAllCondition += "\n                && (((${element.concateneKeys?[i]} ?? \"\") != \"\") ? key.contains(${element.concateneKeys?[i]} as String) : true)";
         deleteAllArguments += "String? ${element.concateneKeys?[i]},";
       }
 
@@ -268,28 +268,20 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
           "    Future<$variableTypeGet> get$firstUpper($getArgumentsCode) async => $getCode";
 
       if((element.concateneKeys?.length ?? 0) > 0 || (element.concateneKeysFromArgument?.length ?? 0) > 0) {
-        // Get all
         getSet += "\n\n    /// Return all element where key contains ${element.key}\n"
             "    /// Return a variable of type \"List<$variableTypeGet>\"\n"
             "    /// ```dart\n"
             "    /// List<$variableTypeGet> ${element.key} = await $objName.getAll$firstUpper();\n"
             "    /// ```\n"
-            "    Future<List<$variableTypeGet>> getAll$firstUpper($deleteAllArgumentsCode) async => {\n"
-            "        List<$variableTypeGet> results = [];\n"
-            "\n"
-            "        Map<String, String> all = await readAll();\n"
-            "        List<String> keys = all.keys.where(\n"
-            "            (String key) => key.contains(\"${element.key}\")$deleteAllCondition\n"
-            "        ).toList(),\n"
-            "\n"
-            "        for(String key in keys) results.add(await get<$variableTypeGet>(key$defaultValueCode$dateFormatCode));\n"
-            "\n"
-            "        return results;\n"
-            "    }";
+            "    Future<List<$variableTypeGet>> getAll$firstUpper($deleteAllArgumentsCode) async => (await Future.wait((await readAll()).keys.where(\n"
+            "            (String key) => key.contains($staticName)$deleteAllCondition\n"
+            "        ).map("
+            "            (String key) async => await get<$variableTypeGet>(key$defaultValueCode$dateFormatCode)\n"
+            "        ))).toList();";
       }
 
       // Set
-      getSet += "\n\n    /// Insert a value into key \"${element.key}\"\n"
+      getSet += "\n\n    /// Insert a value into element with key \"${element.key}\"\n"
           "    /// Require variable ${element.key} of type \"${variableTypeGet}\"\n"
           "    Future<bool> set$firstUpper($variableTypeSet ${element.key}$setArgumentsCode) async => $setCode";
 
@@ -306,19 +298,11 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
             "    /// ```dart\n"
             "    /// await storageHelper.deleteAll$firstUpper();\n"
             "    /// ```\n"
-            "    Future<List<bool>> deleteAll$firstUpper($deleteAllArgumentsCode) async {\n"
-            "        List<bool> results = [];\n"
-            "\n"
-            "        // Read all keys\n"
-            "        Map<String, String> all = await readAll();\n"
-            "        List<String> keys = all.keys.where(\n"
-            "            (String key) => key.contains(\"${element.key}\")$deleteAllCondition\n"
-            "        ).toList();\n"
-            "\n"
-            "        for(String key in keys) results.add(await set<$variableTypeSet>(key, null));\n"
-            "\n"
-            "        return results;\n"
-            "    }";
+            "    Future<List<bool>> deleteAll$firstUpper($deleteAllArgumentsCode) async => (await Future.wait((await readAll()).keys.where(\n"
+            "            (String key) => key.contains($staticName)$deleteAllCondition\n"
+            "        ).map("
+            "            (String key) async => await set<$variableTypeSet>(key, null)\n"
+            "        ))).toList();";
       }
 
     }
@@ -439,7 +423,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
 
       // Decomment for print code
       // Use in test
-      print(code);
+      // print(code);
     } catch(e, stacktrace) {
       print(e);
       print(stacktrace);
