@@ -45,8 +45,17 @@ abstract class StorageHelperBase {
   );
 
   /// Converts [key] and a [defaultValue] from string to data element
-  Future<T> convertEl<T>(String key, {T? defaultValue, String? dateFormat}) async {
+  Future<T> convertEl<T>(String key, {T? defaultValue, String? dateFormat, Duration? duration}) async {
     try {
+	  if((duration?.inMilliseconds ?? 0) > 0) {	// If there is a duration
+		DateTime? creationDateTime = get<DateTime?>(key + "MomentCreation");
+		
+		if(DateTime.now().differences(creationDateTime as DateTime).inMilliseconds >= duration.inMilliseconds) {	// Se è passato il tempo di scadenza dell'elemento
+			await delete(key);	// Elimino l'elemento
+			return null;
+		}
+	  }
+	  
       String? val = await read(key) ?? converter?.reConvert<T>(defaultValue as T, dateFormat: dateFormat);
 
       if(val == null) return null as T;
@@ -62,10 +71,14 @@ abstract class StorageHelperBase {
 
   /// Insert the value [val] into the element with the key "[key]"
   /// Returns `true` if the operation was successful, otherwise returns `false`
-  Future<bool> set<T>(String key, T? val, {String? dateFormat}) async {
+  Future<bool> set<T>(String key, T? val, {String? dateFormat, Duration? duration}) async {
     try {
       if(val != null) {
         await write(key, converter?.reConvert<T>(val, dateFormat: dateFormat));
+		
+		if((duration?.inMilliseconds ?? 0) > 0) {	// If there is a duration
+			await set<DateTime>(key + "MomentCreation", DateTime.now());
+	    }
 
         log(["$key = ${val.toString()}"]);
       }else {
@@ -83,9 +96,9 @@ abstract class StorageHelperBase {
   }
 
   /// Returns the value of the element with the key [key] and if it is null it returns [defaultValue]
-  Future<T> get<T>(String key, {T? defaultValue, String? dateFormat}) async {
+  Future<T> get<T>(String key, {T? defaultValue, String? dateFormat, Duration? duration}) async {
     try {
-      T val = await convertEl<T>(key, defaultValue: defaultValue, dateFormat: dateFormat);
+      T val = await convertEl<T>(key, defaultValue: defaultValue, dateFormat: dateFormat, duration: duration);
 
       log(["$key = ${val.toString()}"]);
 
