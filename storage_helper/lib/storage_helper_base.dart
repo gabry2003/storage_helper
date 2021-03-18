@@ -66,10 +66,6 @@ abstract class StorageHelperBase {
     try {
       if(val != null) {
         await write(key, converter?.reConvert<T>(val, dateFormat: dateFormat));
-		
-		if((duration?.inMilliseconds ?? 0) > 0) {	// If there is a duration
-			await set<DateTime>(key + "MomentCreation", DateTime.now());
-	    }
 
         log(["$key = ${val.toString()}"]);
       }else {
