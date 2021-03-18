@@ -43,14 +43,12 @@ class StorageHelperElement<T> {
   final bool? onlyFunction;
   /// It is used when this specific element (of type DateTime) must have a different date format
   final String? dateFormat;
-  /// Duration of element (optional)
-  final Duration? durata;
 
   /// Constructor, accepts all attributes as parameters
   const StorageHelperElement({
     required this.key, this.staticKey, this.getKey, this.concateneKeys, this.concateneKeysFromArgument,
     required this.type, this.onInit=false, this.description, this.onlyFunction,
-    this.defaultValue, this.defaultIsCode=false, this.dateFormat, this.duration});
+    this.defaultValue, this.defaultIsCode=false, this.dateFormat});
 
   /// Returns the attributes of the object as a Map
   /// Useful for printing the entire object in a single call
@@ -67,6 +65,5 @@ class StorageHelperElement<T> {
     "defaultIsCode": defaultIsCode,
     "onlyFunction": onlyFunction,
     "dateFormat": dateFormat,
-	"duration": duration
   };
 }

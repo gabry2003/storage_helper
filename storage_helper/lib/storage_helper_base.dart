@@ -45,17 +45,8 @@ abstract class StorageHelperBase {
   );
 
   /// Converts [key] and a [defaultValue] from string to data element
-  Future<T> convertEl<T>(String key, {T? defaultValue, String? dateFormat, Duration? duration}) async {
+  Future<T> convertEl<T>(String key, {T? defaultValue, String? dateFormat}) async {
     try {
-	  if((duration?.inMilliseconds ?? 0) > 0) {	// If there is a duration
-		DateTime? creationDateTime = get<DateTime?>(key + "MomentCreation");
-		
-		if(DateTime.now().differences(creationDateTime as DateTime).inMilliseconds >= duration.inMilliseconds) {	// Se è passato il tempo di scadenza dell'elemento
-			await delete(key);	// Elimino l'elemento
-			return null;
-		}
-	  }
-	  
       String? val = await read(key) ?? converter?.reConvert<T>(defaultValue as T, dateFormat: dateFormat);
 
       if(val == null) return null as T;
@@ -98,7 +89,7 @@ abstract class StorageHelperBase {
   /// Returns the value of the element with the key [key] and if it is null it returns [defaultValue]
   Future<T> get<T>(String key, {T? defaultValue, String? dateFormat, Duration? duration}) async {
     try {
-      T val = await convertEl<T>(key, defaultValue: defaultValue, dateFormat: dateFormat, duration: duration);
+      T val = await convertEl<T>(key, defaultValue: defaultValue, dateFormat: dateFormat);
 
       log(["$key = ${val.toString()}"]);
 

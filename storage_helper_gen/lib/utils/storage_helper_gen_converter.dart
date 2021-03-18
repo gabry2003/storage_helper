@@ -95,8 +95,6 @@ class StorageHelperGenConverter {
 
           String? typeToString = obj?.getField("type")?.toString();
           String? defaultValueToString = obj?.getField("defaultValue")?.toString();
-		  
-		  Duration? duration = obj?.getField("duration");
 
           if(typeToString?.contains("StorageHelperType") ?? false) {  // If it is a StorageHelperType
             // I extract the enum index from the toString and access the value from the enum from here
@@ -169,7 +167,6 @@ class StorageHelperGenConverter {
                 defaultIsCode: defaultIsCode,
                 onlyFunction: onlyFunction,
                 dateFormat: dateFormat,
-				duration: duration
             );
           }else {
             element = StorageHelperElement<String>(
@@ -185,7 +182,6 @@ class StorageHelperGenConverter {
                 defaultIsCode: defaultIsCode,
                 onlyFunction: onlyFunction,
                 dateFormat: dateFormat,
-				duration: duration
             );
           }
 
