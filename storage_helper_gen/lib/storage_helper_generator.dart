@@ -168,7 +168,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       if(elementsKeys.contains(element.key)) throw new StorageHelperDuplicateException("elements");
       elementsKeys.add(element.key);  // Add element's key to list
 
-      String staticName = element.staticKey ?? constantName(category.key ?? "" + element.key);
+      String staticName = element.staticKey ?? constantName(element.key);
       String nameForGet = staticName;
       String deleteAllArguments = "";
       String deleteAllCondition = "";
@@ -245,7 +245,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       String setCode = "await set<$variableTypeSet>($nameForGet, ${element.key}$dateFormatCode);";
 
       if((element.description?.length ?? 0) > 0) for(String? desc in element.description!) statics += "\n    /// $desc";
-      statics += "\n    static const String $staticName = \"${element.key}\";";
+      statics += "\n    static const String $staticName = \"${category.key ?? ""}${element.key}\";";
 
       getSet += "\n\n    // Getter and setter for the key \"${element.key}\"";
       if(element.onInit ?? false) {
