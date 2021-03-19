@@ -105,7 +105,9 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
     String objName = "storageHelper";
 
     String gettersAndSetters = "\n\n    // Getters and setters\n"
+        "\n    // ignore: unnecessary_getters_setters\n"
         "    StorageHelperModel get model => _model;\n"
+        "\n    // ignore: unnecessary_getters_setters\n"
         "    set model(StorageHelperModel model) {\n"
         "        _model = model;\n"
         "    }";
@@ -252,7 +254,9 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
         if((element.description?.length ?? 0) > 0) for(String? desc in element.description!) attributes += "\n    /// $desc";
         attributes += "\n    late $variableTypeGet _$getKey" + (defaultValue != "null" && defaultValue != null ? " = $defaultValue" : "") + ";  // Attribute to take the key value without making an asynchronous call";
         init += "\n        ${element.key} = await get$firstUpper();  // Initially put the value inside the attribute";
-        gettersAndSetters += "\n    $variableTypeGet get $getKey => _$getKey;\n"
+        gettersAndSetters += "\n    // ignore: unnecessary_getters_setters\n"
+            "    $variableTypeGet get $getKey => _$getKey;\n"
+            "\n    // ignore: unnecessary_getters_setters\n"
             "    set $getKey($variableTypeGet $getKey) {\n"
             "        _$getKey = $getKey;\n"
             "    }";
