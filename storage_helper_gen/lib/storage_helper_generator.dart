@@ -168,7 +168,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       if(elementsKeys.contains(element.key)) throw new StorageHelperDuplicateException("elements");
       elementsKeys.add(element.key);  // Add element's key to list
 
-      String staticName = element.staticKey ?? constantName(element.key);
+      String staticName = element.staticKey ?? constantName(category.key ?? "" + element.key);
       String nameForGet = staticName;
       String deleteAllArguments = "";
       String deleteAllCondition = "";

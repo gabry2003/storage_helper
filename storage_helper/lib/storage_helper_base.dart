@@ -87,7 +87,7 @@ abstract class StorageHelperBase {
     try {
       T val = await convertEl<T>(key, defaultValue: defaultValue, dateFormat: dateFormat);
 
-      log(["$key = ${val.toString()}"]);
+      log(["$key = ${val?.toString()}"]);
 
       return val;
     } catch(e, stacktrace) {
