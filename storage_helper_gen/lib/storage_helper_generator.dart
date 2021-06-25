@@ -133,11 +133,11 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
           toMap: "\n        \"${category.key}\": await ${category.key}.toMap,",
           gettersAndSetters: "\n    // ignore: unnecessary_getters_setters\n"
               "    $className get ${category.key} => _${category.key};\n"
-          ""
+              ""
               "    set ${category.key}($className ${category.key}) {\n"
               "        _${category.key} = ${category.key};\n"
               "    }",
-          deleteAll: "\nawait delete${upperFirst(category.key ?? "")}();"
+          deleteAll: "\n    await ${category.key}.deleteAll();"
       ));
     }else {
       if(countAnonymous > 0) throw new StorageHelperException("There can only be one category without a key and it is the main one");
@@ -165,6 +165,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
         "    Future<void> init() async {{{onInit${index.toString()}}}";
     String toMap = "\n    /// You can call this method to get all elements by key\n"
         "    Future<Map> get toMap async => {";
+    String deleteAllCode = "";
 
     for(StorageHelperElement element in elements) {
       if(!validKey(element.key)) throw new StorageHelperValidKeyException(element.key);
@@ -218,6 +219,12 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
       String type;
       String? defaultValue;
       String? dateFormat = element.dateFormat?.toString();
+
+      if((element.concateneKeys?.length ?? 0) == 0) {
+        deleteAllCode += "\nawait delete$firstUpper();";
+      }else {
+        deleteAllCode += "\nawait deleteAll$firstUpper();";
+      }
 
       if(element.type is String) { // If element has a custom type
         // if it has a custom type it has to do some conversions so it is nullable
@@ -385,7 +392,8 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
 
     code += "\n    /// Delete all elements\n"
         "    Future<void> deleteAll() async {\n"
-        "        {{deleteAll${index.toString()}}"
+        "        $deleteAllCode\n"
+        "        {{deleteAll${index.toString()}}}"
         "    }";
 
     if(category.addSource != null) code += "\n    // Additional code\n${category.addSource}";
