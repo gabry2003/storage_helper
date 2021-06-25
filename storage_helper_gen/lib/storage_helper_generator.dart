@@ -105,9 +105,9 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
     String objName = "storageHelper";
 
     String gettersAndSetters = "\n\n    // Getters and setters\n"
-        "\n    // ignore: unnecessary_getters_setters\n"
+        "    // ignore: unnecessary_getters_setters\n"
         "    StorageHelperModel get model => _model;\n"
-        "\n    // ignore: unnecessary_getters_setters\n"
+        "    // ignore: unnecessary_getters_setters\n"
         "    set model(StorageHelperModel model) {\n"
         "        _model = model;\n"
         "    }";
@@ -131,10 +131,13 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
           constructorCode: "\n        ${category.key} = new $className(model);        // Initialize object",
           onInit: "\n        log([\"\"\"Initialize $className...\"\"\"]);\n        await ${category.key}.init();",
           toMap: "\n        \"${category.key}\": await ${category.key}.toMap,",
-          gettersAndSetters: "\n    $className get ${category.key} => _${category.key};\n"
+          gettersAndSetters: "\n    // ignore: unnecessary_getters_setters\n"
+              "    $className get ${category.key} => _${category.key};\n"
+          ""
               "    set ${category.key}($className ${category.key}) {\n"
               "        _${category.key} = ${category.key};\n"
-              "    }"
+              "    }",
+          deleteAll: "\nawait delete${upperFirst(category.key ?? "")}();"
       ));
     }else {
       if(countAnonymous > 0) throw new StorageHelperException("There can only be one category without a key and it is the main one");
@@ -382,8 +385,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
 
     code += "\n    /// Delete all elements\n"
         "    Future<void> deleteAll() async {\n"
-        "        log([\"Deleting all...\"]);\n"
-        "        await storage.deleteAll();\n"
+        "        {{deleteAll${index.toString()}}"
         "    }";
 
     if(category.addSource != null) code += "\n    // Additional code\n${category.addSource}";
@@ -451,6 +453,8 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
         String from4 = "{{toMap${i.toString()}}}";
         String replace5 = "";
         String from5 = "{{gettersAndSetters${i.toString()}}}";
+        String replace6 = "";
+        String from6 = "{{deleteAll${i.toString()}}}";
 
         try {
           int count = 0;
@@ -464,6 +468,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
             if(child.onInit != null) replace3 += child.onInit as String;
             if(child.toMap != null) replace4 += child.toMap as String;
             if(child.gettersAndSetters != null) replace5 += child.gettersAndSetters as String;
+            if(child.deleteAll != null) replace6 += child.deleteAll as String;
 
             count++;
           }
@@ -483,6 +488,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
         code = code.replaceAll(from3, replace3);
         code = code.replaceAll(from4, replace4);
         code = code.replaceAll(from5, replace5);
+        code = code.replaceAll(from6, replace6);
       }
 
       code = code.replaceAll("{{sub-categories-example}}", addDartComment(subCategoriesExample, "    "));

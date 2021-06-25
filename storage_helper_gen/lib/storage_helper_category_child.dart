@@ -15,7 +15,9 @@ class StorageHelperCategoryChild {
   final String? toMap;
   /// code to insert getters and setters
   final String? gettersAndSetters;
+  /// code to insert do delete all
+  final String? deleteAll;
 
   /// Constructor, accepts all attributes as parameters
-  const StorageHelperCategoryChild({required this.parentKey, this.code, this.constructorCode, this.onInit, this.toMap, this.gettersAndSetters});
+  const StorageHelperCategoryChild({required this.parentKey, this.code, this.constructorCode, this.onInit, this.toMap, this.gettersAndSetters, this.deleteAll});
 }
