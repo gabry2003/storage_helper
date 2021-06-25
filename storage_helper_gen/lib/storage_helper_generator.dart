@@ -177,9 +177,30 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
 
       // Add the keys
       for(int i = 0;i < (element.concateneKeys?.length ?? 0);i++) {
-        nameForGet += " + ${element.concateneKeys?[i]}";
-        deleteAllCondition += "\n                && (((${element.concateneKeys?[i]} ?? \"\") != \"\") ? key.contains(${element.concateneKeys?[i]} as String) : true)";
-        deleteAllArguments += "String? ${element.concateneKeys?[i]},";
+        // Ogni chiave da concatenare può essere presa da un padre o no in base al fatto che contiene il punto o no
+        String? nomeChiave = element.concateneKeys?[i];
+        String? nomeChiavePulito;
+        String? nomeChiaveForGet = "";
+
+        if(nomeChiave?.contains(".") ?? false) {  // Se la chiave contiene il punto
+          // Divido la stringa in base al punto e prendo l'ultima parte
+          List<String>? splitNomeChiave = nomeChiave?.split(".");
+          nomeChiavePulito = splitNomeChiave?[1];
+
+          // Per il get devo chiamare una funzione e prendere il valore
+          nomeChiaveForGet = """await (() async  {
+  StorageHelper${upperFirst(splitNomeChiave?[0] ?? "")} storageHelper${upperFirst(splitNomeChiave?[0] ?? "")} = new StorageHelper${upperFirst(splitNomeChiave?[0] ?? "")}(this._model);
+  await storageHelper${upperFirst(splitNomeChiave?[0] ?? "")}.init();
+  return storageHelper${upperFirst(splitNomeChiave?[0] ?? "")}.$nomeChiavePulito;
+})()""";
+        }else {
+          nomeChiavePulito = nomeChiave;
+          nomeChiaveForGet = nomeChiave;
+        }
+
+        nameForGet += " + $nomeChiaveForGet";
+        deleteAllCondition += "\n                && ((($nomeChiavePulito ?? \"\") != \"\") ? key.contains($nomeChiavePulito as String) : true)";
+        deleteAllArguments += "String? $nomeChiavePulito,";
       }
 
       String deleteAllArgumentsCode = deleteAllArguments != "" ? "\{$deleteAllArguments\}" : "";

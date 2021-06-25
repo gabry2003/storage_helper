@@ -50,12 +50,13 @@ class StorageHelperConverter {
         return val?.toString();
       case "DateTime":
       case "DateTime?":
-        return new DateFormat(dateFormat ?? model.dateFormat).format(val as DateTime);
+        return val != null ? new DateFormat(dateFormat ?? model.dateFormat).format(val as DateTime) : null;
       case "String":
-      case "String?":
         return val as String;
+      case "String?":
+        return val as String?;
       default:
-        return model.getType(T.toString())?.convertToString(val);
+        return val != null ? model.getType(T.toString())?.convertToString(val) : null;
     }
   }
 }
