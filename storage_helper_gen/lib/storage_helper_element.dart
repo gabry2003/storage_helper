@@ -36,7 +36,7 @@ class StorageHelperElement<T> {
   /// new MyClass(55)
   /// ```
   /// The piece of code must not be empty and must not end with ";"
-  final dynamic? defaultValue;
+  final dynamic defaultValue;
   /// If the default is a piece of code
   final bool? defaultIsCode;
   /// If there is't dart get but only getKey() method

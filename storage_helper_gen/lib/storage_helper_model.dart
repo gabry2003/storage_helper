@@ -108,11 +108,13 @@ class StorageHelperModel {
   final Map<String, StorageHelperCustomType>? customTypes;
   /// Whether to log on the screen of the operations of writing, reading, deleting
   final bool? log;
+  /// If use secure on saving data
+  final bool secure;
   /// Date format, default is yyyy-MM-dd
   final String? dateFormat;
 
   /// Constructor, accepts all attributes as parameters
-  const StorageHelperModel({required this.categories, this.customTypes, this.log=true, this.dateFormat="yyyy-MM-dd"});
+  const StorageHelperModel({required this.categories, this.customTypes, this.log=true, this.secure = true, this.dateFormat="yyyy-MM-dd"});
 
   /// Given the [key] of the custom type, it returns the custom type from the Map, if present
   StorageHelperCustomType? getType(String key) {

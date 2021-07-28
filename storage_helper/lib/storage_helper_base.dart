@@ -1,13 +1,15 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:storage_helper/shared_preferences_actions.dart';
 import 'package:storage_helper/storage_helper_converter.dart';
 import 'package:storage_helper_gen/storage_helper_model.dart';
+import 'dart:io' show Platform;
 
 /// Parent class of all generated helpers
 abstract class StorageHelperBase {
   /// StorageHelper's model
   final StorageHelperModel model;
   /// FlutterSecureStorage's object
-  final FlutterSecureStorage storage = new FlutterSecureStorage();
+  dynamic storage;
   /// StorageHelperConverter's object
   StorageHelperConverter? converter;
 
@@ -15,6 +17,19 @@ abstract class StorageHelperBase {
   /// It initialize [converter]
   StorageHelperBase(this.model) {
     converter = new StorageHelperConverter(model);
+
+    if(!this.model.secure) {  // If I don't have to store data safely
+      // use shared preferences actions model
+      storage = new SharedPreferencesActions();
+    }else {
+      if(Platform.isLinux || Platform.isAndroid || Platform.isIOS) {  // if is supported
+        // Use Flutter Secure Storage
+        storage = new FlutterSecureStorage();
+      }else {
+        // use shared preferences actions model
+        storage = new SharedPreferencesActions();
+      }
+    }
   }
 
   /// Print [logs] on the screen if [model.log] is active

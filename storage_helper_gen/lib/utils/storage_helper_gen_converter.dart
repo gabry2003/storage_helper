@@ -90,8 +90,8 @@ class StorageHelperGenConverter {
           bool? defaultIsCode = getBoolValue(obj, "defaultIsCode");
           bool? onlyFunction = getBoolValue(obj, "onlyFunction");
 
-          dynamic? type;
-          dynamic? defaultValue;
+          dynamic type;
+          dynamic defaultValue;
 
           String? typeToString = obj?.getField("type")?.toString();
           String? defaultValueToString = obj?.getField("defaultValue")?.toString();

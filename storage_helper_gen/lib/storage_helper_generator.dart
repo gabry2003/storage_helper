@@ -132,8 +132,8 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
           onInit: "\n        log([\"\"\"Initialize $className...\"\"\"]);\n        await ${category.key}.init();",
           toMap: "\n        \"${category.key}\": await ${category.key}.toMap,",
           gettersAndSetters: "\n    // ignore: unnecessary_getters_setters\n"
-              "    $className get ${category.key} => _${category.key};\n"
-              ""
+              "    $className get ${category.key} => _${category.key};\n\n"
+              "    // ignore: unnecessary_getters_setters\n"
               "    set ${category.key}($className ${category.key}) {\n"
               "        _${category.key} = ${category.key};\n"
               "    }",
@@ -242,6 +242,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
           switch(type) {
             case "StorageHelperType.String":
             case "StorageHelperType.DateTime":
+            case "StorageHelperType.TimeOfDay":
               if(defaultValue != null && defaultValue != "null") defaultValue = "\"\"\"$defaultValue\"\"\"";
               break;
           }
@@ -252,6 +253,9 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
               break;
             case "StorageHelperType.DateTime":
               variableTypeGet = "DateTime";
+              break;
+            case "StorageHelperType.TimeOfDay":
+              variableTypeGet = "TimeOfDay";
               break;
             case "StorageHelperType.int":
               variableTypeGet = "int";
@@ -267,7 +271,7 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
           variableTypeSet = variableTypeGet + "?";
 
           // if it must return a date it must do a parse so it could go into the catch and return null, so it is nullable, same thing if it does not has a default value
-          if(element.defaultValue == null || variableTypeGet == "DateTime") variableTypeGet += "?";
+          if(element.defaultValue == null || variableTypeGet == "DateTime" || variableTypeGet == "TimeOfDay") variableTypeGet += "?";
         }
       }
 
@@ -285,8 +289,10 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
         if((element.description?.length ?? 0) > 0) for(String? desc in element.description!) attributes += "\n    /// $desc";
         attributes += "\n    late $variableTypeGet _$getKey" + (defaultValue != "null" && defaultValue != null ? " = $defaultValue" : "") + ";  // Attribute to take the key value without making an asynchronous call";
         init += "\n        ${element.key} = await get$firstUpper();  // Initially put the value inside the attribute";
-        gettersAndSetters += "\n    // ignore: unnecessary_getters_setters\n"
-            "    $variableTypeGet get $getKey => _$getKey;\n"
+
+        gettersAndSetters += "\n    // ignore: unnecessary_getters_setters\n";
+        if((element.description?.length ?? 0) > 0) for(String? desc in element.description!) attributes += "\n   /// $desc";
+        gettersAndSetters += "    $variableTypeGet get $getKey => _$getKey;\n"
             "\n    // ignore: unnecessary_getters_setters\n"
             "    set $getKey($variableTypeGet $getKey) {\n"
             "        _$getKey = $getKey;\n"
@@ -298,8 +304,10 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
               "    /// ```dart\n"
               "    /// $variableTypeGet $getKey = await $objName.${element
               .key};\n"
-              "    /// ```\n"
-              "    Future<$variableTypeGet> get $getKey async => $getCode";
+              "    /// ```\n";
+          // Load description of element
+          if((element.description?.length ?? 0) > 0) for(String? desc in element.description!) attributes += "\n    /// $desc";
+          getSet += "\n    Future<$variableTypeGet> get $getKey async => $getCode";
         }
       }
 
@@ -319,8 +327,10 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
           "    /// Return a variable of type \"$variableTypeGet\"\n"
           "    /// ```dart\n"
           "    /// $variableTypeGet ${element.key} = await $objName.get$firstUpper();\n"
-          "    /// ```\n"
-          "    Future<$variableTypeGet> get$firstUpper($getArgumentsCode) async => $getCode";
+          "    /// ```\n";
+      // Load description of element
+      if((element.description?.length ?? 0) > 0) for(String? desc in element.description!) attributes += "\n    /// $desc";
+      getSet += "\n    Future<$variableTypeGet> get$firstUpper($getArgumentsCode) async => $getCode";
 
       if((element.concateneKeys?.length ?? 0) > 0 || (element.concateneKeysFromArgument?.length ?? 0) > 0) {
         getSet += "\n\n    /// Return all elements where key contains ${element.key}\n"
@@ -330,8 +340,10 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
             "    /// ```\n"
             "    /// \n"
             "    /// The optional named parameters can be used to filter the results based on a certain value you passed.\n"
-            "    /// If you do not enter them or enter an empty string they are not counted\n"
-            "    Future<Map<String, $variableTypeGet>> getAll$firstUpper($deleteAllArgumentsCode) async {\n"
+            "    /// If you do not enter them or enter an empty string they are not counted\n";
+        // Load description of element
+        if((element.description?.length ?? 0) > 0) for(String? desc in element.description!) attributes += "\n    /// $desc";
+        getSet += "    Future<Map<String, $variableTypeGet>> getAll$firstUpper($deleteAllArgumentsCode) async {\n"
             "        Map<String, $variableTypeGet> results = {};\n"
             "\n"
             "        List<String> keys = (await readAll()).keys.where(\n"
@@ -346,23 +358,29 @@ class StorageHelperGenerator extends GeneratorForAnnotation<StorageHelperBuilder
 
       // Set
       getSet += "\n\n    /// Insert a value into element with key \"${element.key}\"\n"
-          "    /// Require variable ${element.key} of type \"${variableTypeGet}\"\n"
-          "    Future<bool> set$firstUpper($variableTypeSet ${element.key}$setArgumentsCode) async => $setCode";
+          "    /// Require variable ${element.key} of type \"${variableTypeGet}\"\n";
+      // Load description of element
+      if((element.description?.length ?? 0) > 0) for(String? desc in element.description!) attributes += "\n    /// $desc";
+      getSet += "    Future<bool> set$firstUpper($variableTypeSet ${element.key}$setArgumentsCode) async => $setCode";
 
       // Delete
       getSet += "\n\n    /// Delete key \"${element.key}\"\n"
           "    /// ```dart\n"
           "    /// await storageHelper.delete$firstUpper();\n"
-          "    /// ```\n"
-          "    Future<bool> delete$firstUpper($getArgumentsCode) async => await set$firstUpper(null$deleteArgumentsCode);";
+          "    /// ```\n";
+      // Load description of element
+      if((element.description?.length ?? 0) > 0) for(String? desc in element.description!) attributes += "\n    /// $desc";
+      getSet += "    Future<bool> delete$firstUpper($getArgumentsCode) async => await set$firstUpper(null$deleteArgumentsCode);";
 
       if((element.concateneKeys?.length ?? 0) > 0 || (element.concateneKeysFromArgument?.length ?? 0) > 0) {  // If there are elements with concatene keys
         // Delete all
         getSet += "\n\n    /// Delete all key which contain \"${element.key}\"\n"
             "    /// ```dart\n"
             "    /// await storageHelper.deleteAll$firstUpper();\n"
-            "    /// ```\n"
-            "    Future<List<bool>> deleteAll$firstUpper($deleteAllArgumentsCode) async => (await Future.wait((await readAll()).keys.where(\n"
+            "    /// ```\n";
+        // Load description of element
+        if((element.description?.length ?? 0) > 0) for(String? desc in element.description!) attributes += "\n    /// $desc";
+        getSet += "    Future<List<bool>> deleteAll$firstUpper($deleteAllArgumentsCode) async => (await Future.wait((await readAll()).keys.where(\n"
             "            (String key) => key.contains($staticName)$deleteAllCondition\n"
             "        ).map("
             "            (String key) async => await set<$variableTypeSet>(key, null)\n"
