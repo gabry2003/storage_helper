@@ -21,7 +21,7 @@ class StorageHelperCategory {
   final String? addSource;
   /// A list of objects that describe all the keys, data types etc ... used on FlutterSecureStorage.
   /// Watch also [StorageHelperElement]
-  final List<StorageHelperElement>? elements;
+  final List<StorageHelperElement?>? elements;
 
   /// Constructor, accepts all attributes as parameters
   const StorageHelperCategory({this.parent, this.key, this.description, this.addSource, this.elements});

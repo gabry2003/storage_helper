@@ -1,7 +1,6 @@
 name: storage_helper
 description: Package che permette di utilizzare FlutterSecureStorage con più tipi di dati
 version: 0.0.1
-author: Gabriele Princiotta
 homepage: https://github.com/gabry2003/storage_helper
 
 environment:

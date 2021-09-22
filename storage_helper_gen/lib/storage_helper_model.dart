@@ -88,7 +88,7 @@ class StorageHelperModel {
   ///   // Next code for constructor
   /// );
   /// ```
-  final List<StorageHelperCategory> categories;
+  final List<StorageHelperCategory?> categories;
   /// Map containing custom types that are used by elements
   /// Each key identifies the type and then the key present in this Map must be inserted as a type in the element
   /// Es.
@@ -129,7 +129,7 @@ class StorageHelperModel {
   /// Useful for printing the entire object in a single call
   Map<String, dynamic> get toMap => {
     "categories": categories.map(
-        (StorageHelperCategory category) => category.toMap
+        (StorageHelperCategory? category) => category?.toMap
     ).toList(),
     "customTypes": customTypes,
     "log": log,
